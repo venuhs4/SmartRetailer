@@ -1,20 +1,41 @@
 ﻿(function () {
     "use strict";
 
-    angular.module("myapp.controllers", ['myapp.utils'])
+    angular.module("myapp.controllers", ['myapp.utils', 'ionic'])
 
     .controller("appCtrl", ["$scope", function ($scope) {
     }])
 
     //homeCtrl provides the logic for the home screen
-    .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", function ($scope, $state, $customlocalstorage) {
+    .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        $scope.data = { searchkey : ''};
+
         $scope.refresh = function () {
             //refresh binding
             $scope.$broadcast("scroll.refreshComplete");
         };
         $scope.search = function () {
-            
-            console.log("search called");
+
+            console.log($scope.data.searchkey)
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
+
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:36485/api/parties/key',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(keyObj)
+            }
+
+            $http(req).then(function (res) {
+                console.log(res.data);
+            }, function () {
+                console.log("failed");
+            });
         };
 
         $scope.searchSuggestion = function () {
