@@ -8,12 +8,15 @@
 
     //homeCtrl provides the logic for the home screen
     .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-        $scope.data = { searchkey : ''};
+        $scope.data = { searchkey: '' };
+        $scope.data.choice = '';
+        $scope.retailers = null;
 
         $scope.refresh = function () {
             //refresh binding
             $scope.$broadcast("scroll.refreshComplete");
         };
+
         $scope.search = function () {
 
             console.log($scope.data.searchkey)
@@ -33,6 +36,8 @@
 
             $http(req).then(function (res) {
                 console.log(res.data);
+                $scope.retailers = res.data;
+
             }, function () {
                 console.log("failed");
             });
@@ -40,8 +45,21 @@
 
         $scope.searchSuggestion = function () {
 
-            console.log("suggestion called");
+            nconsole.log("suggestion called");
         };
+
+        $scope.setAsDefaultRetailer = function () {
+            console.log($customlocalstorage.getObject("defaulRetailer"));
+
+            angular.forEach($scope.retailers, function (value, index) {
+                if(value.id == $scope.data.choice)
+                {
+                    $customlocalstorage.setObject("defaulRetailer",value);
+                }
+            });
+
+            console.log("set default retailer.");
+        }
     }])
 
     //errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
