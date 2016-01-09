@@ -1,16 +1,25 @@
 ﻿(function () {
     "use strict";
 
-    angular.module("myapp.controllers", [])
+    angular.module("myapp.controllers", ['myapp.utils'])
 
     .controller("appCtrl", ["$scope", function ($scope) {
     }])
 
     //homeCtrl provides the logic for the home screen
-    .controller("homeCtrl", ["$scope", "$state", function ($scope, $state) {
+    .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", function ($scope, $state, $customlocalstorage) {
         $scope.refresh = function () {
             //refresh binding
             $scope.$broadcast("scroll.refreshComplete");
+        };
+        $scope.search = function () {
+            
+            console.log("search called");
+        };
+
+        $scope.searchSuggestion = function () {
+
+            console.log("suggestion called");
         };
     }])
 
