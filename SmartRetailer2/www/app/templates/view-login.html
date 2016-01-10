@@ -1,0 +1,37 @@
+﻿
+<link href="css/index.css" rel="stylesheet" />
+<ion-view view-title="login">
+    <ion-header-bar class="bar-header bar-dark">
+        <div class="title">Login</div>
+        <div class="buttons">
+            <button class="button button-clear icon ion-person"></button>
+        </div>
+    </ion-header-bar>
+    <ion-content class="padding">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+
+        <form name="signinForm" novalidate="" ng-submit="login()">
+
+            <div class="list">
+                <label class="item item-input"
+                       ng-class="{ 'has-error-lr' : signinForm.id.$invalid}">
+                    <span class="input-label">Phone/email</span>
+                    <input type="text"
+                           name="id"
+                           ng-model="user.id"
+                           required>
+                </label>
+
+                <div class="form-errors" ng-show="validateID()">
+                    <div class="form-error">{{iderrormessage}}</div>
+                </div>
+            </div>
+                <button class="button button-block button-positive">
+                    Click to Get OTP
+                </button>
+        </form>
+        <button class="button button-block button-positive" ng-click="gotoRegistration()">
+            Not Register
+        </button>
+    </ion-content>
+</ion-view>

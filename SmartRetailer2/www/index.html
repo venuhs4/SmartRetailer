@@ -6,21 +6,14 @@
     <title></title>
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
+    
 </head>
 <body>
     <div class="bar bar-header bar-assertive" ng-controller="errorCtrl" ng-show="activeError" style="z-index: 1000">
         <h1 class="title">Error: {{error}}</h1>
         <button class="button icon ion-close-round" ng-click="dismissError()"></button>
     </div>
-    <!--<ion-header-bar class="bar-energized">
-        <div class="buttons">
-            <button class="button icon ion-home">Home</button>
-        </div>
-        <h1 class="title">Our Awesome Header</h1>
-        <div class="buttons">
-            <button class="button button-clear icon ion-star"></button>
-        </div>
-    </ion-header-bar>-->
+   
     <ion-nav-view></ion-nav-view>
     
     <div class="spinner">
@@ -43,6 +36,5 @@
     <script src="app/app.js"></script>
 
     <!--custom-->
-    
 </body>
 </html>
