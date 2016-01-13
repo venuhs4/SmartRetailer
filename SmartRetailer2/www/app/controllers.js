@@ -146,41 +146,10 @@
         }
     }])
 
-    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", function ($scope, $state, $customlocalstorage, $http, $ionicPopover) {
+    .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
         $scope.data = { searchkey: '' };
         $scope.data.choice = '';
         $scope.retailers = null;
-
-        $scope.logout = function () {
-            localStorage.clear()
-            console.log('logout');
-            $state.go('register');
-        };
-
-        $ionicPopover.fromTemplateUrl('my-popover.html', {
-            scope: $scope
-        }).then(function (popover) {
-            $scope.popover = popover;
-        });
-
-        $scope.openPopover = function ($event) {
-            $scope.popover.show($event);
-        };
-        $scope.closePopover = function () {
-            $scope.popover.hide();
-        };
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function () {
-            $scope.popover.remove();
-        });
-        // Execute action on hide popover
-        $scope.$on('popover.hidden', function () {
-            // Execute action
-        });
-        // Execute action on remove popover
-        $scope.$on('popover.removed', function () {
-            // Execute action
-        });
 
         $scope.refresh = function () {
             //refresh binding
@@ -196,12 +165,8 @@
             };
 
             var req = {
-                method: 'POST',
-                url: 'http://localhost:36485/api/parties/key',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(keyObj)
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/retailer/all',
             }
 
             $http(req).then(function (res) {
@@ -214,8 +179,79 @@
         };
 
         $scope.searchSuggestion = function () {
+            console.log("suggestion called");
+        };
 
-            nconsole.log("suggestion called");
+        $scope.setAsDefaultRetailer = function () {
+            console.log($customlocalstorage.getObject("defaultRetailer"));
+
+            angular.forEach($scope.retailers, function (value, index) {
+                if (value.id == $scope.data.choice) {
+                    $customlocalstorage.setObject("defaultRetailer", value);
+                    $state.go('products');
+                }
+            });
+            console.log("set default retailer.");
+        };
+    }])
+
+    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", function ($scope, $state, $customlocalstorage, $http, $ionicPopover) {
+        $scope.data = { searchkey: '' };
+        $scope.data.choice = '';
+        $scope.products = null;
+
+        $scope.logout = function () {
+            localStorage.clear()
+            console.log('logout');
+            $state.go('register');
+        };
+
+        $ionicPopover.fromTemplateUrl('my-popover.html', {
+            scope: $scope
+        }).then(function (popover) {
+            $scope.popover = popover;
+        });
+
+        $scope.openPopover = function ($event) {
+            $scope.popover.show($event);
+            console.log("openPopover");
+        };
+        $scope.closePopover = function () {
+            $scope.popover.hide();
+            console.log("closePopover");
+        };
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function () {
+            $scope.popover.remove();
+            console.log("$destroy");
+        });
+        // Execute action on hide popover
+        $scope.$on('popover.hidden', function () {
+            // Execute action
+            console.log("hidden");
+        });
+        // Execute action on remove popover
+        $scope.$on('popover.removed', function () {
+            // Execute action
+            console.log("removed");
+        });
+
+        $scope.refresh = function () {
+            //refresh binding
+            $scope.$broadcast("scroll.refreshComplete");
+        };
+
+        $scope.search = function () {
+
+            console.log($scope.data.searchkey)
+            $http.get('data/products.json').success(function (res) {
+                $scope.products = res;
+            });
+            
+        };
+
+        $scope.searchSuggestion = function () {
+            console.log("suggestion called");
         };
 
         $scope.setAsDefaultRetailer = function () {

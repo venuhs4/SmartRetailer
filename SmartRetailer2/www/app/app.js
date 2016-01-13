@@ -17,18 +17,20 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            if (idUserLogedIn == null) {
-                console.warn("user not loged in");
-                $urlRouterProvider.otherwise("/login");
-            }
-            else if (isDefaultRetailerSet == null) {
-                console.warn("default retailer not set");
-                $urlRouterProvider.otherwise("/home");
-            }
-            else {
-                console.info('everything set');
-                $urlRouterProvider.otherwise("/products");
-            }
+            $urlRouterProvider.otherwise("/products");
+
+            //if (idUserLogedIn == null) {
+            //    console.warn("user not loged in");
+            //    $urlRouterProvider.otherwise("/products");
+            //}
+            //else if (isDefaultRetailerSet == null) {
+            //    console.warn("default retailer not set");
+            //    $urlRouterProvider.otherwise("/products");
+            //}
+            //else {
+            //    console.info('everything set');
+            //    $urlRouterProvider.otherwise("/products");
+            //}
             $stateProvider
             .state("register", {
                 url: "/register",
@@ -39,6 +41,10 @@
                 url: "/login",
                 templateUrl: "app/templates/view-login.html",
                 controller: "loginCtrl"
+            }).state("retailers", {
+                url: "/retailers",
+                templateUrl: "app/templates/view-retailers.html",
+                controller: "retailersCtrl"
             })
             .state("home", {
                 url: "/home",
