@@ -17,7 +17,7 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            $urlRouterProvider.otherwise("/products");
+            $urlRouterProvider.otherwise("/app/products");
 
             //if (idUserLogedIn == null) {
             //    console.warn("user not loged in");
@@ -32,6 +32,12 @@
             //    $urlRouterProvider.otherwise("/products");
             //}
             $stateProvider
+            .state("app", {
+                url: "/app",
+                abstract:true,
+                templateUrl: "app/templates/view-menu.html",
+                controller: "appCtrl"
+            })
             .state("register", {
                 url: "/register",
                 templateUrl: "app/templates/view-register.html",
@@ -50,7 +56,7 @@
                 url: "/home",
                 templateUrl: "app/templates/view-home.html",
                 controller: "homeCtrl"
-            }).state("products", {
+            }).state("app.products", {
                 url: "/products",
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
@@ -71,6 +77,5 @@
                 templateUrl: "app/templates/view-feedback.html",
                 controller: "feedbackCtrl"
             });
-
         });
 })();
