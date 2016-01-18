@@ -84,228 +84,231 @@
         }
     }])
 
+
+        
+
     .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    $scope.iderrormessage = '';
-    $scope.user = {
-        id: '',
-        deviceID: ''
-    };
+        $scope.iderrormessage = '';
+        $scope.user = {
+            id: '',
+            deviceID: ''
+        };
+        
 
-    console.log("loginCtrl");
-    $scope.login = function () {
-        $scope.user.deviceID = device.uuid;
-        var loginSuccess = false;
+        console.log("loginCtrl");
+        $scope.login = function () {
+            $scope.user.deviceID = device.uuid;
+            var loginSuccess = false;
 
-        var req = {
-            method: 'POST',
-            url: 'http://localhost:36485/api/registation',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify($scope.user)
-        }
-
-        $http(req).then(function (res) {
-            console.log(res.data);
-            if (res.data.registrationStatus == 'OK') {
-                loginSuccess = true;
-                $customlocalstorage.setObject('registration', $scope.user)
-                $customlocalstorage.set('idUserLogedIn', $scope.user.id);
-                console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:36485/api/registation',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify($scope.user)
             }
-            console.info("registration post success");
-        }, function () {
-            console.warn("registration post failed");
-        });
 
-        if (loginSuccess) {
-            $state.go('home');
+            $http(req).then(function (res) {
+                console.log(res.data);
+                if (res.data.registrationStatus == 'OK') {
+                    loginSuccess = true;
+                    $customlocalstorage.setObject('registration', $scope.user)
+                    $customlocalstorage.set('idUserLogedIn', $scope.user.id);
+                    console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                }
+                console.info("registration post success");
+            }, function () {
+                console.warn("registration post failed");
+            });
+
+            if (loginSuccess) {
+                $state.go('home');
+            }
+        };
+        $scope.validateID = function () {
+            console.log($scope.user.id);
+            if ($scope.user.id != null) {
+                $scope.iderrormessage = ''
+                console.log('not show');
+                return false;
+            }
+            else {
+                $scope.iderrormessage = 'not a valid input';
+                console.info('show');
+                return true;
+            }
         }
-    };
-    $scope.validateID = function () {
-        console.log($scope.user.id);
-        if ($scope.user.id != null) {
-            $scope.iderrormessage = ''
-            console.log('not show');
-            return false;
-        }
-        else {
-            $scope.iderrormessage = 'not a valid input';
-            console.info('show');
-            return true;
-        }
-    }
-    $scope.gotoRegistration = function () {
-        $state.go('register');
-    };
-}])
+        $scope.gotoRegistration = function () {
+            $state.go('register');
+        };
+    }])
 
     .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    $scope.data = { searchkey: '' };
-    $scope.data.choice = '';
-    $scope.retailers = null;
+        $scope.data = { searchkey: '' };
+        $scope.data.choice = '';
+        $scope.retailers = null;
 
-    $scope.refresh = function () {
-        //refresh binding
-        $scope.$broadcast("scroll.refreshComplete");
-    };
-
-    $scope.search = function () {
-
-        console.log($scope.data.searchkey)
-        var keyObj = {
-            Key: $scope.data.searchkey,
-            device: device.uuid
+        $scope.refresh = function () {
+            //refresh binding
+            $scope.$broadcast("scroll.refreshComplete");
         };
 
-        var req = {
-            method: 'POST',
-            url: 'http://localhost:36485/api/parties/key',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(keyObj)
-        }
+        $scope.search = function () {
 
-        $http(req).then(function (res) {
-            console.log(res.data);
-            $scope.retailers = res.data;
+            console.log($scope.data.searchkey)
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
 
-        }, function () {
-            console.warn("search post failed");
-        });
-    };
-
-    $scope.searchSuggestion = function () {
-
-        nconsole.log("suggestion called");
-    };
-
-    $scope.setAsDefaultRetailer = function () {
-        console.log($customlocalstorage.getObject("defaultRetailer"));
-
-        angular.forEach($scope.retailers, function (value, index) {
-            if (value.id == $scope.data.choice) {
-                $customlocalstorage.setObject("defaultRetailer", value);
-                $state.go('products');
+            var req = {
+                method: 'POST',
+                url: 'http://localhost:36485/api/parties/key',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(keyObj)
             }
-        });
 
-        console.log("set default retailer.");
-    }
-}])
+            $http(req).then(function (res) {
+                console.log(res.data);
+                $scope.retailers = res.data;
+
+            }, function () {
+                console.warn("search post failed");
+            });
+        };
+
+        $scope.searchSuggestion = function () {
+
+            nconsole.log("suggestion called");
+        };
+
+        $scope.setAsDefaultRetailer = function () {
+            console.log($customlocalstorage.getObject("defaultRetailer"));
+
+            angular.forEach($scope.retailers, function (value, index) {
+                if (value.id == $scope.data.choice) {
+                    $customlocalstorage.setObject("defaultRetailer", value);
+                    $state.go('products');
+                }
+            });
+
+            console.log("set default retailer.");
+        }
+    }])
 
     .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', function ($scope, $state, $customlocalstorage, $http, $rootScope) {
-    $scope.data = { searchkey: '' };
-    $scope.data.choice = '';
-    $scope.retailers = null;
+        $scope.data = { searchkey: '' };
+        $scope.data.choice = '';
+        $scope.retailers = null;
 
-    $scope.refresh = function () {
-        //refresh binding
-        $scope.$broadcast("scroll.refreshComplete");
-    };
-
-    $scope.search = function () {
-        $scope.retailers = [];
-        var searchString = $scope.data.searchkey.toLowerCase();
-        var keyObj = {
-            Key: $scope.data.searchkey,
-            device: device.uuid
+        $scope.refresh = function () {
+            //refresh binding
+            $scope.$broadcast("scroll.refreshComplete");
         };
 
-        var req = {
-            method: 'GET',
-            url: 'http://192.168.1.35:8080/retailer/all',
-        }
-
-        $http(req).then(function (res) {
-            var x = +searchString;
-            if (x.toString() === searchString) {
-                angular.forEach(res.data, function (item) {
-                    if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
-                        $scope.retailers.push(item);
-                    }
-                    else {
-                        console.log();
-                    }
-                });
-            }
-            else {
-                angular.forEach(res.data, function (item) {
-                    if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
-                        $scope.retailers.push(item);
-                    }
-                });
-            }
-        }, function () {
-            console.warn("search post failed");
-        });
-    };
-
-    $scope.searchSuggestion = function () {
-        console.log("suggestion called");
-        $scope.retailers = [];
-        var searchString = $scope.data.searchkey.toLowerCase();
-
-        if (searchString == "") {
+        $scope.search = function () {
             $scope.retailers = [];
-            return;
-        }
-        var keyObj = {
-            Key: $scope.data.searchkey,
-            device: device.uuid
+            var searchString = $scope.data.searchkey.toLowerCase();
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
+
+            var req = {
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/retailer/all',
+            }
+
+            $http(req).then(function (res) {
+                var x = +searchString;
+                if (x.toString() === searchString) {
+                    angular.forEach(res.data, function (item) {
+                        if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
+                            $scope.retailers.push(item);
+                        }
+                        else {
+                            console.log();
+                        }
+                    });
+                }
+                else {
+                    angular.forEach(res.data, function (item) {
+                        if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
+                            $scope.retailers.push(item);
+                        }
+                    });
+                }
+            }, function () {
+                console.warn("search post failed");
+            });
         };
 
-        var req = {
-            method: 'GET',
-            url: 'http://192.168.1.35:8080/retailer/all',
-        }
+        $scope.searchSuggestion = function () {
+            console.log("suggestion called");
+            $scope.retailers = [];
+            var searchString = $scope.data.searchkey.toLowerCase();
 
-        $http(req).then(function (res) {
-            var x = +searchString;
-            if (x.toString() === searchString) {
-                angular.forEach(res.data, function (item) {
-                    if ((""+item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
-                        $scope.retailers.push(item);
-                    }
-                    else
-                    {
-                        console.log();
-                    }
-                });
+            if (searchString == "") {
+                $scope.retailers = [];
+                return;
             }
-            else {
-                angular.forEach(res.data, function (item) {
-                    if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
-                        $scope.retailers.push(item);
-                    }
-                });
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
+
+            var req = {
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/retailer/all',
             }
-        }, function () {
-            console.warn("search post failed");
-        });
-    };
 
-    $scope.closePopover = function () {
-        $scope.popover.hide();
-        console.log("closePopover from retailer");
-    };
+            $http(req).then(function (res) {
+                var x = +searchString;
+                if (x.toString() === searchString) {
+                    angular.forEach(res.data, function (item) {
+                        if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
+                            $scope.retailers.push(item);
+                        }
+                        else {
+                            console.log();
+                        }
+                    });
+                }
+                else {
+                    angular.forEach(res.data, function (item) {
+                        if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
+                            $scope.retailers.push(item);
+                        }
+                    });
+                }
+            }, function () {
+                console.warn("search post failed");
+            });
+        };
 
-    $scope.setAsDefaultRetailer = function () {
-        console.log($customlocalstorage.getObject("defaultRetailer"));
+        $scope.closePopover = function () {
+            $scope.popover.hide();
+            console.log("closePopover from retailer");
+        };
 
-        angular.forEach($scope.retailers, function (value, index) {
-            if (value.id == $scope.data.choice) {
-                $customlocalstorage.setObject("defaultRetailer", value);
-                console.log("default reatiler set");
-                console.log(value);
-                $state.go('app.products');
-            }
-        });
-        $rootScope.$emit("CallSetFooterRetailer", {});
-        console.log("set default retailer.");
-    };
-}])
+        $scope.setAsDefaultRetailer = function () {
+            console.log($customlocalstorage.getObject("defaultRetailer"));
+
+            angular.forEach($scope.retailers, function (value, index) {
+                if (value.id == $scope.data.choice) {
+                    $customlocalstorage.setObject("defaultRetailer", value);
+                    console.log("default reatiler set");
+                    console.log(value);
+                    $state.go('app.products');
+                }
+            });
+            $rootScope.$emit("CallSetFooterRetailer", {});
+            console.log("set default retailer.");
+        };
+    }])
 
 .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", function ($scope, $state, $customlocalstorage, $http, $ionicPopover) {
     $scope.data = { searchkey: '' };
@@ -398,6 +401,21 @@
     console.log('feedbackCtrl');
 }])
 
+.controller("legalCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    console.log('legalCtrl');
+}])
+ .controller("updateVendorCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+     console.log('updateVendorCtrl');
+ }])
+.controller("rateAppCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        
+    console.log('rateAppCtrl');
+}])
+    
+
+.controller("contactUsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    console.log('contactUsCtrl');
+}])
 //errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
 .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
     //public properties that define the error message and if an error is present
@@ -423,4 +441,6 @@
         $scope.$apply();
     });
 }]);
+
+
 })();

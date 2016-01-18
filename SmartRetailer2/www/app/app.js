@@ -10,6 +10,7 @@
                 if (window.StatusBar) {
                     StatusBar.styleDefault();
                 }
+             //   AppRate.promptForRating(true);
             });
         })
         .config(function ($stateProvider, $urlRouterProvider) {
@@ -34,7 +35,7 @@
             $stateProvider
             .state("app", {
                 url: "/app",
-                abstract:true,
+                abstract: true,
                 templateUrl: "app/templates/view-menu.html",
                 controller: "appCtrl"
             })
@@ -52,7 +53,7 @@
                 templateUrl: "app/templates/view-retailers.html",
                 controller: "retailersCtrl"
             })
-            .state("home", {
+            .state("app.home", {
                 url: "/home",
                 templateUrl: "app/templates/view-home.html",
                 controller: "homeCtrl"
@@ -60,7 +61,7 @@
                 url: "/products",
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
-            }).state("profile", {
+            }).state("app.profile", {
                 url: "/profile",
                 templateUrl: "app/templates/view-profile.html",
                 controller: "profileCtrl"
@@ -76,6 +77,28 @@
                 url: "/feedback",
                 templateUrl: "app/templates/view-feedback.html",
                 controller: "feedbackCtrl"
+            }).state("legal", {
+                url: "/legal",
+                templateUrl: "app/templates/view-legal.html",
+                controller: "legalCtrl"
+            })
+            .state("rateapp", {
+                url: "/rateapp",
+                templateUrl: "app/templates/view-rateapp.html",
+                controller: "rateAppCtrl"
+            })
+            .state("vendorupdate", {
+                url: "/vendorupdate",
+                templateUrl: "app/templates/view-updatevendor.html",
+                controller: "updateVendorCtrl"
+            })
+            .state("contactus", {
+                url: "/contactus",
+                templateUrl: "app/templates/view-contactus.html",
+                controller: "contactUsCtrl"
             });
         });
+
+
 })();
+
