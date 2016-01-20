@@ -29,6 +29,9 @@
             },
             getObject: function (key) {
                 return JSON.parse($window.localStorage[key] || '{}');
+            },
+            getObject: function (key, defaultValue) {
+                return JSON.parse($window.localStorage[key] || defaultValue);
             }
         };
 

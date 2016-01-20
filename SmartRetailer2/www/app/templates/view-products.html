@@ -11,49 +11,11 @@
 
 
     <ion-nav-buttons side="primary">
-        <a style="color: white;" class="button button-icon icon ion-power"></a>
-
+        <a style="color: white;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
         <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/addToCart"></a>
-
-        <a style="color: white;" class="button button-icon icon ion-ios-alarm-outline"></a>
-
-        <a style="color: white;" class="button button-icon icon ion-android-person"></a>
 
         <!--<a style="color: white;" class="button button-icon icon ion-android-star"></a>-->
         
-                <script id="my-popover.html" type="text/ng-template">
-            <ion-popover-view>
-                <ion-content class="contendheight">
-                    <div class="list">
-                        <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
-                            <i class="icon ion-person"></i>
-                            Update Profile
-                        </a>
-
-                        <a class="item item-icon-left" href="#/vendorupdate" ng-click="closePopover()">
-                            <i class="icon ion-android-person-add"></i>
-                            Update Vendor
-                        </a>
-                        <a class="item item-icon-left" href="#/rateapp" ng-click="closePopover()">
-                            <i class="icon ion-android-star"></i>
-                            Rate this app
-                        </a>
-
-                        <a class="item item-icon-left" href="#/legal" ng-click="closePopover()">
-                            <i class="icon ion-document"></i>
-                            Legal
-                        </a>
-
-                        <a class="item item-icon-left" href="#/contactus" ng-click="closePopover()">
-                            <i class="icon ion-android-contact"></i>
-                            Contact Us
-                        </a>
-
-                    </div>
-                </ion-content>
-            </ion-popover-view>
-
-        </script>
 
         <!--<button class="button" side="primary">
             <i class="ion-power"></i>
@@ -79,7 +41,7 @@
 
     </ion-nav-buttons>
 
-    <div class="bar bar-header item-input-inset">
+    <div class="bar bar-subheader item-input-inset">
         <label class="item-input-wrapper">
             <i class="icon ion-android-search placeholder-icon"></i>
             <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">

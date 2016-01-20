@@ -1,76 +1,52 @@
 ﻿
-    <!--<div class="bar bar-header item-input-inset">
-        <label class="item-input-wrapper">
+<ion-nav-bar>
+    <ion-nav-back-button>
+    </ion-nav-back-button>
+</ion-nav-bar>
+
+<ion-view>
+    <ion-nav-buttons side="primary">
+        <label class="item-input">
             <i class="icon ion-android-search placeholder-icon"></i>
             <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
         </label>
-        <button class="button button-clear" ng-click="search()">
-            Search
-        </button>
-    </div>-->
+    </ion-nav-buttons>
 
-    <ion-view>
-        <div class="bar bar-header item-input-inset">
-            <label class="item-input-wrapper">
-                <i class="icon ion-android-search placeholder-icon"></i>
-                <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
-            </label>
-            <button class="button button-clear" ng-click="search()">
-                Search
-            </button>
+    <ion-content class="has-header padding">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        <div class="list" ng-show="suggestionShow">
+            <div class="item" ng-repeat="text in searchList track by $index" ng-click="suggestionClick(text)">
+                <p>{{text}}</p>
+            </div>
         </div>
 
-
-   <ion-content class="has-header padding">
-            <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-            <div class="list">
-
-                <div class="item" ng-repeat="p in p_suggestion">
-                    <div class="row">
-                        <div class="col col-50" style="color:blue">
-                            <strong>{{p.name}}</strong><br />{{p.primaryUse}}<br />{{p.productType}}<br />{{p.segment.category.name}}
+        <div class="list card" ng-show="productShow">
+            <div class="item" ng-repeat="item in productDetailList track by $index">
+                <div class="row">
+                    <div class="col col-25">
+                        <div class="item-avatar">
+                            <img src="../../images/user-male.png" />
                         </div>
-                        <!--<div class="col col-25">
-                            {{p.toconsumer.mrp}} Rs
-                        </div>-->
-                        
-                        <div>
-                            <label>Qty({{p.UOM}})</label>
-                            <input class="padding" type="number" placeholder="Qty" />
+                    </div>
+                    <div class="col col-25">
+                        <h3>{{item.name}}</h3>
+                        <p>{{item.segment.category.name}}</p>
+                    </div>
+                    <div class="col col-50">
+                        <div class="row row-centre">
+                            <div class="col">
+                                <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
+                            </div>
+                            <div class="col col-25">
+                               {{returnNumber(item.id)}}
+                            </div>
+                            <div class="col">
+                                <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </ion-content>
-
-    </ion-view>
-
-
-
-
-
-
-
-
-
-
-    <!-- <div>Your product suggestion.</div>
-     <ion-content class="has-header padding">
-         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-         <div class="list">
-             <div class="item" ng-repeat="p in p_suggestion">
-                 <div class="row">
-                     <div class="col col-50" style="color:blue">
-                         <strong>{{p.Category}}</strong><br />{{p.ContentDetail}}<br />{{p.productType}}<br />{{p.Price}}
-                     </div>
-                     <!--<div class="col col-25">
-                         {{p.toconsumer.mrp}} Rs
-                     </div>
-                     <div>
-                         <label>Qty({{p.UOM}})</label>
-                         <input class="padding" ng-model="Qty" type="number" placeholder="Qty" ng-change="onQtyChange(p.productId,Qty)"/>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </ion-content>-->
+        </div>
+    </ion-content>
+</ion-view>

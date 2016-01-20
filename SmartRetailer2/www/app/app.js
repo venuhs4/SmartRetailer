@@ -62,7 +62,7 @@
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
                 
-            }).state("productsuggestion", {
+            }).state("app.productsuggestion", {
                 url: "/productsuggestion",
                 templateUrl: "app/templates/view-productsuggestion.html",
                 controller: "productsuggestionCtrl"
@@ -101,11 +101,12 @@
                 url: "/contactus",
                 templateUrl: "app/templates/view-contactus.html",
                 controller: "contactUsCtrl"
-            })//.state("addToCart", {
-            //    url: "/addToCart",
-            //    templateUrl: "app/templates/view-addtocart.html",
-            //    controller: "addToCartCtrl"
-            //});
+            })
+                .state("addToCart", {
+                url: "/addToCart",
+                templateUrl: "app/templates/view-addtocart.html",
+                controller: "addToCartCtrl"
+            });
         });
 
 

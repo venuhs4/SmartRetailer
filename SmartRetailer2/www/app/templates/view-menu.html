@@ -2,11 +2,8 @@
     <ion-side-menu-content>
         <ion-nav-bar class="bar-royal">
             <ion-nav-back-button></ion-nav-back-button>
-            <div class="buttons" ng-click="openPopover($event)">
-                <button class="button button-clear icon ion-navicon-round"></button>
-            </div>
             <ion-nav-buttons side="left">
-                <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+                <button menu-toggle="left" class="button button-icon icon ion-navicon-round"></button>
             </ion-nav-buttons>
             <ion-nav-buttons side="right">
                 <button ng-click="openPopover($event)" class="button button-icon icon ion-android-more-vertical"></button>
@@ -40,3 +37,36 @@
         </footer>
     </ion-side-menu>
 </ion-side-menus>
+
+<script id="my-popover.html" type="text/ng-template">
+    <ion-popover-view>
+        <ion-content class="contendheight">
+            <div class="list">
+                <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
+                    <i class="icon ion-person"></i>
+                    Update Profile
+                </a>
+
+                <a class="item item-icon-left" href="#/vendorupdate" ng-click="closePopover()">
+                    <i class="icon ion-android-person-add"></i>
+                    Update Vendor
+                </a>
+                <a class="item item-icon-left" href="#/rateapp" ng-click="closePopover()">
+                    <i class="icon ion-android-star"></i>
+                    Rate this app
+                </a>
+
+                <a class="item item-icon-left" href="#/legal" ng-click="closePopover()">
+                    <i class="icon ion-document"></i>
+                    Legal
+                </a>
+
+                <a class="item item-icon-left" href="#/contactus" ng-click="closePopover()">
+                    <i class="icon ion-android-contact"></i>
+                    Contact Us
+                </a>
+
+            </div>
+        </ion-content>
+    </ion-popover-view>
+</script>
