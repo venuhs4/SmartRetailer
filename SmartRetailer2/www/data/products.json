@@ -16,7 +16,7 @@
     "productDesc": "A type of famous biscuit in India.",
     "productId": 2,
     "productName": "Onions",
-    "productType": "Daily",
+    "productType": "NonDaily",
     "UOM": "KG"
   },
   {
@@ -36,14 +36,14 @@
     "productDesc": "A type of famous biscuit in India.",
     "productId": 4,
     "productName": "Gemini Oil",
-    "productType": "Daily",
+    "productType": "NonDaily",
     "UOM": "Pack"
   },
   {
     "Category": "Cookies",
     "ContentDetail": "Net Weight:60g",
     "Price": 78,
-    "productDesc": "A type of famous biscuit in India.",
+    "productDesc": "A type of famous biscuit ",
     "productId": 5,
     "productName": "Tata Salt",
     "productType": "Daily",
@@ -56,7 +56,7 @@
     "productDesc": "A type of famous biscuit in India.",
     "productId": 6,
     "productName": "Dove sachet",
-    "productType": "Daily",
+    "productType": "NonDaily",
     "UOM": "Pack"
   },
   {
@@ -152,8 +152,8 @@
   {
     "Category": "Cookies",
     "ContentDetail": "Net Weight:60g",
-    "Price": 130,
-    "productDesc": "A type of famous biscuit in India.",
+    "Price": 250,
+    "productDesc": "in India.",
     "productId": 16,
     "productName": "Gemini cooking oil",
     "productType": "Daily",

@@ -33,5 +33,43 @@
         };
 
         return $customlocalstorage;
+    }]).factory('$productlist', ['$http',function ($http) {
+        var products = null;
+        console.log("get products");
+        $http.get("http://192.168.1.35:8080/product").success(function (res) {
+            products = res;
+            console.log(products);
+            console.log("get products success");
+        }).then(function () {
+        });
+
+        return {
+            getProducts: function () {
+                return products;
+            },
+        };
     }]);
+
+
 })();
+
+
+//angular.module('myApp', [])
+//    .service('sharedProperties', function () {
+//        var property = 'First';
+
+//        return {
+//            getProperty: function () {
+//                return property;
+//            },
+//            setProperty: function(value) {
+//                property = value;
+//            }
+//        };
+//    });
+//Using the service in a controller:
+
+//    function Ctrl2($scope, sharedProperties) {
+//        $scope.prop2 = "Second";
+//        $scope.both = sharedProperties.getProperty() + $scope.prop2;
+//    }

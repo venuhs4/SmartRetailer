@@ -53,7 +53,7 @@
                 templateUrl: "app/templates/view-retailers.html",
                 controller: "retailersCtrl"
             })
-            .state("app.home", {
+            .state("home", {
                 url: "/home",
                 templateUrl: "app/templates/view-home.html",
                 controller: "homeCtrl"
@@ -61,7 +61,12 @@
                 url: "/products",
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
-            }).state("app.profile", {
+                
+            }).state("productsuggestion", {
+                url: "/productsuggestion",
+                templateUrl: "app/templates/view-productsuggestion.html",
+                controller: "productsuggestionCtrl"
+            }).state("profile", {
                 url: "/profile",
                 templateUrl: "app/templates/view-profile.html",
                 controller: "profileCtrl"
@@ -96,7 +101,11 @@
                 url: "/contactus",
                 templateUrl: "app/templates/view-contactus.html",
                 controller: "contactUsCtrl"
-            });
+            })//.state("addToCart", {
+            //    url: "/addToCart",
+            //    templateUrl: "app/templates/view-addtocart.html",
+            //    controller: "addToCartCtrl"
+            //});
         });
 
 

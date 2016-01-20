@@ -85,7 +85,7 @@
     }])
 
 
-        
+
 
     .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
         $scope.iderrormessage = '';
@@ -93,7 +93,7 @@
             id: '',
             deviceID: ''
         };
-        
+
 
         console.log("loginCtrl");
         $scope.login = function () {
@@ -279,13 +279,13 @@
                 }
                 else {
                     angular.forEach(res.data, function (item) {
-                        if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
+                        if (item.storename.indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
                     });
                 }
             }, function () {
-                console.warn("search post failed");
+                console.warn("suggestion post failed");
             });
         };
 
@@ -310,80 +310,245 @@
         };
     }])
 
-.controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", function ($scope, $state, $customlocalstorage, $http, $ionicPopover) {
-    $scope.data = { searchkey: '' };
-    $scope.data.choice = '';
-    $scope.products = null;
-    $http.get('http://192.168.1.35:8080/product/all').success(function (res) {
-        $scope.products = res;
-    });
+ .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window) {
+     $scope.data = { searchkey: '' };
+     $scope.products = $productlist.getProducts();
 
-    $scope.logout = function () {
-        localStorage.clear()
-        console.log('logout');
-        $state.go('register');
-    };
+     //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
+     //    $scope.products = res;
+     //     console.log(res)
+     //});
+   
+     $scope.search = function () {
 
-    $ionicPopover.fromTemplateUrl('my-popover.html', {
-        scope: $scope
-    }).then(function (popover) {
-        $scope.popover = popover;
-    });
+         $scope.products = [];
+         console.log($scope.data.searchkey)
+         $window.location = "#/view-productsuggestion.html";
+         
+         //var req = $http.get('data/products.json').success(function (res) {
+         var req = {
+             method: 'GET',
+             url: 'http://192.168.1.35:8080/product',
+         }
+         //  $scope.products = res;
+         var searchString = $scope.data.searchkey.toLowerCase();
+         var keyObj = {
+             Key: $scope.data.searchkey,
+             device: device.uuid
+         };
 
-    $scope.openPopover = function ($event) {
-        $scope.popover.show($event);
-        console.log("openPopover");
-    };
-    $scope.closePopover = function () {
-        $scope.popover.hide();
-        console.log("closePopover");
-    };
-    //Cleanup the popover when we're done with it!
-    $scope.$on('$destroy', function () {
-        $scope.popover.remove();
-        console.log("$destroy");
-    });
-    // Execute action on hide popover
-    $scope.$on('popover.hidden', function () {
-        // Execute action
-        console.log("hidden");
-    });
-    // Execute action on remove popover
-    $scope.$on('popover.removed', function () {
-        // Execute action
-        console.log("removed");
-    });
+         $http(req).then(function (res) {
+             var x = +searchString;
+             if (x.toString() === searchString) {
+                 angular.forEach(res.data, function (item) {
+                     if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
 
-    $scope.refresh = function () {
-        //refresh binding
-        $scope.$broadcast("scroll.refreshComplete");
-    };
+                         $scope.products.push(item);
+                        
+                     }
+                     else {
+                         console.log();
+                     }
+                 });
+             }
+             else {
+                 angular.forEach(res.data, function (item) {
+                     if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+                         $scope.products.push(item);
+                     }
+                 });
+             }
+         }, function () {
+             console.warn("search post failed");
+         });
 
-    $scope.search = function () {
+         // console.log(res)
+         //  });
 
-        console.log($scope.data.searchkey)
-        $http.get('http://192.168.1.35:8080/product/all').success(function (res) {
-            $scope.products = res;
-        });
+     };
 
-    };
+     $scope.searchSuggestion = function () {
 
-    $scope.searchSuggestion = function () {
-        console.log("suggestion called");
-    };
+         console.log("suggestion called");
+         $scope.productsSuggest = [];
 
-    $scope.setAsDefaultRetailer = function () {
-        console.log($customlocalstorage.getObject("defaultRetailer"));
+      //  $window.location.href = 'app/templates/view-productsuggestion.html';
+         
+         var searchString = $scope.data.searchkey.toLowerCase();
+       
 
-        angular.forEach($scope.retailers, function (value, index) {
-            if (value.id == $scope.data.choice) {
-                $customlocalstorage.setObject("defaultRetailer", value);
-            }
-        });
+         if (searchString == "") {
+             $scope.productsSuggest = [];
+             return;
+         }
+         var keyObj = {
+             Key: $scope.data.searchkey,
+             device: device.uuid
+         };
 
-        console.log("set default retailer.");
-    }
-}])
+         var req = {
+             method: 'GET',
+             url: 'http://192.168.1.35:8080/product',
+         }
+
+         $http(req).then(function (res) {
+             var x = +searchString;
+             if (x.toString() === searchString) {
+                 angular.forEach(res.data, function (item) {
+                     if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
+                        
+                         $scope.productsSuggest.push(item);
+                       
+                     }
+                     else {
+                         console.log();
+                     }
+                 });
+             }
+             else {
+                 angular.forEach(res.data, function (item) {
+                     if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+                  var datacaptured= $scope.productsSuggest.push(item);
+                     }
+                 });
+             }
+         }, function () {
+             console.warn("search post failed");
+         });
+     };
+
+
+     $scope.logout = function () {
+         localStorage.clear()
+         console.log('logout');
+         $state.go('register');
+     };
+
+     $ionicPopover.fromTemplateUrl('my-popover.html', {
+         scope: $scope
+     }).then(function (popover) {
+         $scope.popover = popover;
+     });
+
+     $scope.openPopover = function ($event) {
+         $scope.popover.show($event);
+         console.log("openPopover");
+     };
+     $scope.closePopover = function () {
+         $scope.popover.hide();
+         console.log("closePopover");
+     };
+     //Cleanup the popover when we're done with it!
+     $scope.$on('$destroy', function () {
+         $scope.popover.remove();
+         console.log("$destroy");
+     });
+     // Execute action on hide popover
+     $scope.$on('popover.hidden', function () {
+         // Execute action
+         console.log("hidden");
+     });
+     // Execute action on remove popover
+     $scope.$on('popover.removed', function () {
+         // Execute action
+         console.log("removed");
+     });
+
+     $scope.refresh = function () {
+         //refresh binding
+         $scope.$broadcast("scroll.refreshComplete");
+     };
+
+
+
+
+     //$scope.setAsDefaultRetailer = function () {
+     //    console.log($customlocalstorage.getObject("defaultRetailer"));
+
+     //    angular.forEach($scope.retailers, function (value, index) {
+     //        if (value.id == $scope.data.choice) {
+     //            $customlocalstorage.setObject("defaultRetailer", value);
+     //        }
+     //    });
+
+     //    console.log("set default retailer.");
+     //}
+ }])
+
+
+   .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+       $scope.data = { searchkey: '' };
+       console.log("product sugg called..");
+       //   $scope.data.choice = '';
+     //  $scope.p_suggestion = null;
+
+       $scope.productsuggestion = function () {
+          
+           $scope.p_suggestion = $productlist.getProducts();
+           var searchString = $scope.data.searchkey.toLowerCase();
+
+           if (searchString == "") {
+               $scope.p_suggestion = [];
+               return;
+           }
+
+           var keyObj = {
+               Key: $scope.data.searchkey,
+               device: device.uuid
+           };
+
+           var req = {
+               method: 'GET',
+               url: 'data/products.json',
+           }
+       }
+
+       //$scope.onQtyChange=function();
+
+       $http(req).then(function (res) {
+           var x = +searchString;
+           if (x.toString() === searchString) {
+               angular.forEach(res.data, function (item) {
+                   if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
+                       $scope.p_suggestion.push(item);
+                   }
+                   else {
+                       console.log();
+                   }
+               });
+           }
+           else {
+               angular.forEach(res.data, function (item) {
+                   if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+                       $scope.p_suggestion.push(item);
+                   }
+               });
+           }
+       }, function () {
+           console.warn(" product suggestion post failed");
+       });
+
+
+       console.log('productsuggestionCtrl');
+   }])
+
+
+
+
+ .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+
+     //$scope.data = { searchkey: '' };
+     //$scope.data.choice = '';
+     //$scope.productsCart = null;
+     //$http.get('data/products.json').success(function (res) {
+     //    $scope.productsCart = res;
+     //    //$scope.products = res;
+     //    console.log($scope.productsCart)
+     //});
+     console.log('addToCart');
+ }])
+
+
 
 .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
     console.log('profileCtrl');
@@ -408,14 +573,16 @@
      console.log('updateVendorCtrl');
  }])
 .controller("rateAppCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-        
+
     console.log('rateAppCtrl');
 }])
-    
+
 
 .controller("contactUsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
     console.log('contactUsCtrl');
 }])
+
+
 //errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
 .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
     //public properties that define the error message and if an error is present

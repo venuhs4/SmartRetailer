@@ -1,0 +1,76 @@
+﻿
+    <!--<div class="bar bar-header item-input-inset">
+        <label class="item-input-wrapper">
+            <i class="icon ion-android-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
+        </label>
+        <button class="button button-clear" ng-click="search()">
+            Search
+        </button>
+    </div>-->
+
+    <ion-view>
+        <div class="bar bar-header item-input-inset">
+            <label class="item-input-wrapper">
+                <i class="icon ion-android-search placeholder-icon"></i>
+                <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
+            </label>
+            <button class="button button-clear" ng-click="search()">
+                Search
+            </button>
+        </div>
+
+
+   <ion-content class="has-header padding">
+            <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+            <div class="list">
+
+                <div class="item" ng-repeat="p in p_suggestion">
+                    <div class="row">
+                        <div class="col col-50" style="color:blue">
+                            <strong>{{p.name}}</strong><br />{{p.primaryUse}}<br />{{p.productType}}<br />{{p.segment.category.name}}
+                        </div>
+                        <!--<div class="col col-25">
+                            {{p.toconsumer.mrp}} Rs
+                        </div>-->
+                        
+                        <div>
+                            <label>Qty({{p.UOM}})</label>
+                            <input class="padding" type="number" placeholder="Qty" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ion-content>
+
+    </ion-view>
+
+
+
+
+
+
+
+
+
+
+    <!-- <div>Your product suggestion.</div>
+     <ion-content class="has-header padding">
+         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+         <div class="list">
+             <div class="item" ng-repeat="p in p_suggestion">
+                 <div class="row">
+                     <div class="col col-50" style="color:blue">
+                         <strong>{{p.Category}}</strong><br />{{p.ContentDetail}}<br />{{p.productType}}<br />{{p.Price}}
+                     </div>
+                     <!--<div class="col col-25">
+                         {{p.toconsumer.mrp}} Rs
+                     </div>
+                     <div>
+                         <label>Qty({{p.UOM}})</label>
+                         <input class="padding" ng-model="Qty" type="number" placeholder="Qty" ng-change="onQtyChange(p.productId,Qty)"/>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </ion-content>-->
