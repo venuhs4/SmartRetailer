@@ -36,7 +36,7 @@
         };
 
         return $customlocalstorage;
-    }]).factory('$productlist', ['$http',function ($http) {
+    }]).factory('$productlist', ['$http', function ($http) {
         var products = null;
         console.log("get products");
         $http.get("http://192.168.1.35:8080/product").success(function (res) {
@@ -51,7 +51,8 @@
                 return products;
             },
         };
-    }]);
+    }])
+    ;
 
 
 })();

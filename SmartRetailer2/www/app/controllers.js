@@ -3,14 +3,57 @@
 
     angular.module("myapp.controllers", ['myapp.utils', 'ionic'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", function ($scope, $customlocalstorage, $ionicPopover, $rootScope) {
-
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http) {
         $scope.retailer = "";
+        $scope.category = [];
+        $scope.segments = []
+        $scope.subsegments = [];
+        $scope.catID = '';
+        $scope.segID = '';
+        $scope.subsegID = '';
 
+        $http({
+            method: "GET",
+            url: "http://192.168.1.35:8080/category",
+        }).then(function (res) {
+            $scope.category = res.data;
+            console.log("category success1");
+        }, function () {
+            console.log("category request failed");
+        });
+
+        angular.forEach($scope.category, function (value, index) {
+            $http({
+                method: "GET",
+                url: "http://192.168.1.35:8080/category/segment/" + value.id,
+            }).then(function (res) {
+                $scope.category[index].segment = res.data;
+                angular.forEach($scope.category[index].segment, function (value,index) {
+                    $scope.category[index].segment[index].subSegment = res.data;
+                });
+            });
+        });
+
+        console.log($scope.category);
+        $scope.updateSegments = function (id) {
+            $scope.catID = id;
+            $http({
+                method: "GET",
+                url: "http://192.168.1.35:8080/category/segment/" + id,
+            }).then(function (res) {
+                $scope.segments = res.data;
+            });
+        };
+
+        $scope.isThisShown = function (id) {
+            if (id === $scope.catID)
+                return true;
+            else
+                return false;
+        };
         $rootScope.$on("CallSetFooterRetailer", function () {
             $scope.setRetailerFooter();
         });
-
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -23,15 +66,12 @@
                 console.log(retailer.storename);
             }
         };
-
         $scope.setRetailerFooter();
-
         $ionicPopover.fromTemplateUrl('my-popover.html', {
             scope: $scope
         }).then(function (popover) {
             $scope.popover = popover;
         });
-
         $scope.openPopover = function ($event) {
             $scope.popover.show($event);
             console.log("openPo-pover");
@@ -590,10 +630,10 @@
 
  .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
 
-     
+
      $scope.productDetailList = [];
-     
-     $scope.updateCartList = function() {
+
+     $scope.updateCartList = function () {
          var cartList = $customlocalstorage.getObject('cartlist', '[]');
          $scope.productDetailList = [];
          angular.forEach(cartList, function (value, index) {

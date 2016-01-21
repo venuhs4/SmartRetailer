@@ -30,6 +30,12 @@
                 <ion-item nav-clear menu-close href="#/register">
                     Register
                 </ion-item>
+                <ion-item ng-repeat="cat in category" ng-click="updateSegments(cat.id)">
+                    {{cat.name}}
+                    <ion-item ng-repeat="seg in segments" ng-show="isThisShown(cat.id)">
+                        {{seg.segmentname}}
+                    </ion-item>
+                </ion-item>
             </ion-list>
         </ion-content>
         <footer class="bar bar-footer">
