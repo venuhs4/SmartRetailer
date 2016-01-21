@@ -8,15 +8,16 @@
             Search
         </button>
     </div>-->
-
-
     <ion-nav-buttons side="primary">
         <a style="color: white;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
-        <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/addToCart"></a>
+        <div>
 
-        <!--<a style="color: white;" class="button button-icon icon ion-android-star"></a>-->
+            <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">                            
+                <span class="badge badge-assertive">4</span>          
+            </a>
+        </div>
         
-
+        <!--<a style="color: white;" class="button button-icon icon ion-android-star"></a>-->
         <!--<button class="button" side="primary">
             <i class="ion-power"></i>
         </button>
@@ -37,7 +38,6 @@
         <button class="button button button-royal" side="primary">
             <i class="ion-android-star"></i>
         </button>-->
-
 
     </ion-nav-buttons>
 
@@ -66,6 +66,7 @@
                         {{p.toconsumer.mrp}} Rs
                     </div>-->
                     <div>
+                        <label>Qty(
                         <label>Qty({{p.UOM}})</label>
                         <input class="padding" type="number" placeholder="Qty" />
                     </div>

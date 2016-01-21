@@ -1,16 +1,15 @@
-﻿
-<ion-nav-bar>
+﻿<ion-nav-bar>
     <ion-nav-back-button>
     </ion-nav-back-button>
 </ion-nav-bar>
-
 <ion-view>
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        
+
         <div class="list card">
             <div class="item" ng-repeat="item in productDetailList">
-                <div class="row">
+                <div class="row" >
+                    <label>Qty</label>
                     <div class="col col-25">
                         <div class="item-avatar">
                             <img src="../../images/user-male.png" />
