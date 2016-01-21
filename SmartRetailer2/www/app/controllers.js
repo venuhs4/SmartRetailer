@@ -54,6 +54,7 @@
         $rootScope.$on("CallSetFooterRetailer", function () {
             $scope.setRetailerFooter();
         });
+
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -95,7 +96,8 @@
             // Execute action
             console.log("removed");
         });
-    }])
+    }
+    ])
 
     .controller("registerCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
         $scope.iderrormessage = '';
@@ -531,6 +533,7 @@
        $scope.productDetailList = [];
        $scope.suggestionShow = false;
        $scope.productShow = false;
+     $scope.productCount = 0;
 
 
        var req = {
@@ -588,10 +591,17 @@
                    if (cartList[index].Qty <= 1) {
                        cartList.splice(index, 1);
                    }
-                   else if (cartList[index].Qty != 0) {
+                 if (cartList[index].Qty != 0) {
                        cartList[index].Qty--;
                    }
+
+                else if(cartList[index].Qty == 0)
+                 {
+                     $scope.productShow = false;
+                    console.log("cleared");
+
                }
+             }            
            });
 
            $customlocalstorage.setObject('cartlist', cartList);
@@ -614,7 +624,10 @@
                });
            }
            $customlocalstorage.setObject('cartlist', cartList);
-           console.log(cartList);
+         $customlocalstorage.clear;
+         
+         // console.log(cartList.count);
+         
        };
        $scope.returnNumber = function (itemid) {
            var cartList = $customlocalstorage.getObject('cartlist', '[]');
@@ -630,10 +643,9 @@
 
  .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
 
-
      $scope.productDetailList = [];
-
-     $scope.updateCartList = function () {
+     
+     $scope.updateCartList = function() {
          var cartList = $customlocalstorage.getObject('cartlist', '[]');
          $scope.productDetailList = [];
          angular.forEach(cartList, function (value, index) {
@@ -650,6 +662,9 @@
              });
          });
          console.log($scope.productDetailList);
+         $scope.productCount = $scope.productDetailList;
+         console.log($scope.productDetailList.length);
+
      }
      $scope.updateCartList();
      $scope.minusQty = function (id) {
@@ -671,6 +686,7 @@
 
          $customlocalstorage.setObject('cartlist', cartList);
          console.log(cartList);
+        
      };
      $scope.plusQty = function (id) {
          console.log(cartList);
@@ -698,6 +714,7 @@
              if (value.productId == itemid) {
                  qty = value.Qty;
              }
+            
          });
          return qty;
      };
@@ -760,4 +777,6 @@
         $scope.$apply();
     });
 }]);
+
+
 })();

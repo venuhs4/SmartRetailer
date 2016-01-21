@@ -102,7 +102,7 @@
                 templateUrl: "app/templates/view-contactus.html",
                 controller: "contactUsCtrl"
             })
-                .state("addToCart", {
+                .state("app.addToCart", {
                 url: "/addToCart",
                 templateUrl: "app/templates/view-addtocart.html",
                 controller: "addToCartCtrl"
