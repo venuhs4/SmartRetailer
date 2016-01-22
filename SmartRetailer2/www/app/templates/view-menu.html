@@ -18,24 +18,30 @@
         </header>
         <ion-content class="has-header">
             <ion-list>
-                <ion-item nav-clear menu-close href="#/app/home">
-                    Home
-                </ion-item>
-                <ion-item nav-clear menu-close href="#/retailers">
-                    Retailers
-                </ion-item>
-                <ion-item nav-clear menu-close href="#/login">
-                    Login
-                </ion-item>
-                <ion-item nav-clear menu-close href="#/register">
-                    Register
-                </ion-item>
-                <ion-item ng-repeat="cat in category" ng-click="updateSegments(cat.id)">
-                    {{cat.name}}
-                    <ion-item ng-repeat="seg in segments" ng-show="isThisShown(cat.id)">
-                        {{seg.segmentname}}
+                <div ng-repeat="cat in category">
+                    <ion-item class="item-stable item-icon-right"
+                              ng-click="toggleGroup(cat);loadSegments(cat)"
+                              ng-class="{active:isGroupShown(cat)}">
+                        <span style="color:#111111">
+                            {{cat.name}}
+                        </span>
+                        <i class="icon" ng-class="isGroupShown(cat) ? 'ion-ios-arrow-up' : 'ion-ios-arrow-down'"></i>
                     </ion-item>
-                </ion-item>
+                    <div ng-repeat="seg in cat.segments">
+                        <ion-item class="item-accordion"
+                                  ng-click="toggleSeg(seg);loadSubSegments(seg)"
+                                  ng-show="isGroupShown(cat)"
+                                  ng-class="{active:isSegShown(seg)}">
+                            &nbsp;&nbsp;<span style="color:#555555">{{seg.segmentname}}</span>
+                        </ion-item>
+                        <ion-item nav-clear menu-close class="item-accordion"
+                                  ng-repeat="subSeg in seg.subSegments"
+                                  ng-show="isSegShown(seg) && isGroupShown(cat)"
+                                  ng-click="getProducts(cat.id,seg.id,subSeg.id)" href="#/app/productsuggestion">
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#999999">{{subSeg.name}}</span>
+                        </ion-item>
+                    </div>
+                </div>
             </ion-list>
         </ion-content>
         <footer class="bar bar-footer">
@@ -52,9 +58,9 @@
                     <i class="icon ion-person"></i>
                     Update Profile
                 </a>
-                
-                
-            <a class="item item-icon-left" href="#/vendorupdate" ng-click="closePopover()">
+
+
+                <a class="item item-icon-left" href="#/vendorupdate" ng-click="closePopover()">
                     <i class="icon ion-android-person-add"></i>
                     Update Vendor
                 </a>
@@ -77,3 +83,24 @@
         </ion-content>
     </ion-popover-view>
 </script>
+<style type="text/css">
+    .list .item.item-accordion {
+        line-height: 38px;
+        padding-top: 0;
+        padding-bottom: 0;
+        transition: 0.2s all linear;
+        border: none;
+    }
+    .list .item.item-stable{
+        border:none;
+    }
+
+        .list .item.item-accordion.ng-hide {
+            line-height: 0px;
+        }
+
+        .list .item.item-accordion.ng-hide-add,
+        .list .item.item-accordion.ng-hide-remove {
+            display: block !important;
+        }
+</style>

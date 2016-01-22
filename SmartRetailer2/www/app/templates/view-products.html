@@ -13,7 +13,7 @@
         <div>
 
             <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">                            
-                <span class="badge badge-assertive">4</span>          
+                <span class="badge badge-assertive" ng-show="parentObj.cartCount !== '0'">{{parentObj.cartCount}}</span>          
             </a>
         </div>
         
@@ -50,8 +50,6 @@
             Search
         </button>
     </div>
-
-
 
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>

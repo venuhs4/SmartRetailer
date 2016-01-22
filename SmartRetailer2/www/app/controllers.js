@@ -6,11 +6,11 @@
     .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http) {
         $scope.retailer = "";
         $scope.category = [];
-        $scope.segments = []
-        $scope.subsegments = [];
-        $scope.catID = '';
-        $scope.segID = '';
-        $scope.subsegID = '';
+        $scope.shownSeg = null;
+        $scope.parentProducts = {};
+        $scope.parentObj = {
+            cartCount: $customlocalstorage.getObject('cartlist', '[]').length
+        };
 
         $http({
             method: "GET",
@@ -21,40 +21,75 @@
         }, function () {
             console.log("category request failed");
         });
-
-        angular.forEach($scope.category, function (value, index) {
+        $scope.getProducts = function (id1, id2, id3) {
             $http({
                 method: "GET",
-                url: "http://192.168.1.35:8080/category/segment/" + value.id,
+                url: "http://192.168.1.35:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
             }).then(function (res) {
-                $scope.category[index].segment = res.data;
-                angular.forEach($scope.category[index].segment, function (value,index) {
-                    $scope.category[index].segment[index].subSegment = res.data;
+                $scope.parentProducts.products = res.data;
+            });
+            console.log($scope.parentProducts.products);
+        }
+        $scope.loadSegments = function (cat) {
+            if ($scope.shownGroup === cat && cat.segments === undefined) {
+                $http({
+                    method: "GET",
+                    url: "http://192.168.1.35:8080/category/segment/" + cat.id,
+                }).then(function (res) {
+                    cat.segments = res.data;
                 });
-            });
-        });
-
-        console.log($scope.category);
-        $scope.updateSegments = function (id) {
-            $scope.catID = id;
-            $http({
-                method: "GET",
-                url: "http://192.168.1.35:8080/category/segment/" + id,
-            }).then(function (res) {
-                $scope.segments = res.data;
-            });
+            }
         };
-
-        $scope.isThisShown = function (id) {
-            if (id === $scope.catID)
+        $scope.loadSubSegments = function (seg) {
+            if ($scope.shownSeg === seg && seg.subSegments === undefined) {
+                $http({
+                    method: "GET",
+                    url: "http://192.168.1.35:8080/category/segment/subsegment/" + seg.id,
+                }).then(function (res) {
+                    seg.subSegments = res.data;
+                    console.log(seg.subSegments);
+                });
+            }
+        };
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                console.log("if toggle");
+                $scope.shownGroup = null;
+            } else {
+                console.log("else toggle");
+                $scope.shownGroup = group;
+            }
+            console.log(group);
+        };
+        $scope.isGroupShown = function (group) {
+            if ($scope.shownGroup === group) {
                 return true;
-            else
+            }
+            else {
                 return false;
+            }
+        };
+        $scope.toggleSeg = function (group) {
+            if ($scope.isSegShown(group)) {
+                console.log("if toggle");
+                $scope.shownSeg = null;
+            } else {
+                console.log("else toggle");
+                $scope.shownSeg = group;
+            }
+            console.log(group);
+        };
+        $scope.isSegShown = function (group) {
+            if ($scope.shownSeg === group) {
+                return true;
+            }
+            else {
+                return false;
+            }
         };
         $rootScope.$on("CallSetFooterRetailer", function () {
             $scope.setRetailerFooter();
         });
-
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -364,362 +399,371 @@
         };
     }])
 
- .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window) {
-     $scope.data = { searchkey: '' };
-     $scope.products = $productlist.getProducts();
-
-     //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
-     //    $scope.products = res;
-     //     console.log(res)
-     //});
-
-     $scope.search = function () {
-
-         $scope.products = [];
-         console.log($scope.data.searchkey)
-         $window.location = "#/view-productsuggestion.html";
-
-         //var req = $http.get('data/products.json').success(function (res) {
-         var req = {
-             method: 'GET',
-             url: 'http://192.168.1.35:8080/product',
-         }
-         //  $scope.products = res;
-         var searchString = $scope.data.searchkey.toLowerCase();
-         var keyObj = {
-             Key: $scope.data.searchkey,
-             device: device.uuid
-         };
-
-         $http(req).then(function (res) {
-             var x = +searchString;
-             if (x.toString() === searchString) {
-                 angular.forEach(res.data, function (item) {
-                     if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
-
-                         $scope.products.push(item);
-
-                     }
-                     else {
-                         console.log();
-                     }
-                 });
-             }
-             else {
-                 angular.forEach(res.data, function (item) {
-                     if (item.name.toLowerCase().indexOf(searchString) !== -1) {
-                         $scope.products.push(item);
-                     }
-                 });
-             }
-         }, function () {
-             console.warn("search post failed");
-         });
-
-         // console.log(res)
-         //  });
-
-     };
-
-     $scope.searchSuggestion = function () {
-
-         console.log("suggestion called");
-         $scope.productsSuggest = [];
-
-         //  $window.location.href = 'app/templates/view-productsuggestion.html';
-
-         var searchString = $scope.data.searchkey.toLowerCase();
+    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window) {
+        $scope.data = { searchkey: '' };
+        $scope.parentObj.products = $productlist.getProducts();
 
 
-         if (searchString == "") {
-             $scope.productsSuggest = [];
-             return;
-         }
-         var keyObj = {
-             Key: $scope.data.searchkey,
-             device: device.uuid
-         };
+        //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
+        //    $scope.products = res;
+        //     console.log(res)
+        //});
 
-         var req = {
-             method: 'GET',
-             url: 'http://192.168.1.35:8080/product',
-         }
+        $scope.search = function () {
 
-         $http(req).then(function (res) {
-             var x = +searchString;
-             if (x.toString() === searchString) {
-                 angular.forEach(res.data, function (item) {
-                     if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
+            $scope.products = [];
+            console.log($scope.data.searchkey)
+            $window.location = "#/view-productsuggestion.html";
 
-                         $scope.productsSuggest.push(item);
+            //var req = $http.get('data/products.json').success(function (res) {
+            var req = {
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/product',
+            }
+            //  $scope.products = res;
+            var searchString = $scope.data.searchkey.toLowerCase();
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
 
-                     }
-                     else {
-                         console.log();
-                     }
-                 });
-             }
-             else {
-                 angular.forEach(res.data, function (item) {
-                     if (item.name.toLowerCase().indexOf(searchString) !== -1) {
-                         var datacaptured = $scope.productsSuggest.push(item);
-                     }
-                 });
-             }
-         }, function () {
-             console.warn("search post failed");
-         });
-     };
+            $http(req).then(function (res) {
+                var x = +searchString;
+                if (x.toString() === searchString) {
+                    angular.forEach(res.data, function (item) {
+                        if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
 
+                            $scope.products.push(item);
 
-     $scope.logout = function () {
-         localStorage.clear()
-         console.log('logout');
-         $state.go('register');
-     };
+                        }
+                        else {
+                            console.log();
+                        }
+                    });
+                }
+                else {
+                    angular.forEach(res.data, function (item) {
+                        if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+                            $scope.products.push(item);
+                        }
+                    });
+                }
+            }, function () {
+                console.warn("search post failed");
+            });
 
-     $ionicPopover.fromTemplateUrl('my-popover.html', {
-         scope: $scope
-     }).then(function (popover) {
-         $scope.popover = popover;
-     });
+            // console.log(res)
+            //  });
 
-     $scope.openPopover = function ($event) {
-         $scope.popover.show($event);
-         console.log("openPopover");
-     };
-     $scope.closePopover = function () {
-         $scope.popover.hide();
-         console.log("closePopover");
-     };
-     //Cleanup the popover when we're done with it!
-     $scope.$on('$destroy', function () {
-         $scope.popover.remove();
-         console.log("$destroy");
-     });
-     // Execute action on hide popover
-     $scope.$on('popover.hidden', function () {
-         // Execute action
-         console.log("hidden");
-     });
-     // Execute action on remove popover
-     $scope.$on('popover.removed', function () {
-         // Execute action
-         console.log("removed");
-     });
+        };
 
-     $scope.refresh = function () {
-         //refresh binding
-         $scope.$broadcast("scroll.refreshComplete");
-     };
+        $scope.searchSuggestion = function () {
 
-     //$scope.setAsDefaultRetailer = function () {
-     //    console.log($customlocalstorage.getObject("defaultRetailer"));
+            console.log("suggestion called");
+            $scope.productsSuggest = [];
 
-     //    angular.forEach($scope.retailers, function (value, index) {
-     //        if (value.id == $scope.data.choice) {
-     //            $customlocalstorage.setObject("defaultRetailer", value);
-     //        }
-     //    });
+            //  $window.location.href = 'app/templates/view-productsuggestion.html';
 
-     //    console.log("set default retailer.");
-     //}
- }])
-   .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-       console.log('productsuggestionCtrl');
-       $scope.data = { searchkey: '' };
-       $scope.productList = [];
-       $scope.searchList = [];
-       $scope.productDetailList = [];
-       $scope.suggestionShow = false;
-       $scope.productShow = false;
-     $scope.productCount = 0;
+            var searchString = $scope.data.searchkey.toLowerCase();
 
 
-       var req = {
-           method: 'GET',
-           url: 'http://192.168.1.35:8080/product',
-       }
+            if (searchString == "") {
+                $scope.productsSuggest = [];
+                return;
+            }
+            var keyObj = {
+                Key: $scope.data.searchkey,
+                device: device.uuid
+            };
 
-       $http(req).then(function (res) {
-           angular.forEach(res.data, function (item) {
-               $scope.productList.push(item.name);
-           });
-           console.log($scope.productList);
-           console.log("initial list");
-       }, function () {
-           console.warn("search post failed");
-       });
+            var req = {
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/product',
+            }
 
-       $scope.searchSuggestion = function () {
-           $scope.suggestionShow = true;
-           $scope.productShow = false;
-           var searchString = $scope.data.searchkey.toLowerCase();
-           console.log("KEY:" + searchString);
-           $scope.searchList = [];
-           angular.forEach($scope.productList, function (item) {
-               if ((item).toLowerCase().indexOf(searchString) !== -1) {
-                   $scope.searchList.push(item);
-               }
-           });
-           console.log($scope.searchList);
-       };
-       $scope.suggestionClick = function (text) {
+            $http(req).then(function (res) {
+                var x = +searchString;
+                if (x.toString() === searchString) {
+                    angular.forEach(res.data, function (item) {
+                        if (("" + item.name).toLowerCase().indexOf(searchString) !== -1) {
 
-           $scope.suggestionShow = false;
-           $scope.productShow = true;
+                            $scope.productsSuggest.push(item);
 
-           var productsReq = {
-               method: 'GET',
-               url: 'http://192.168.1.35:8080/product/search/' + text,
-           }
+                        }
+                        else {
+                            console.log();
+                        }
+                    });
+                }
+                else {
+                    angular.forEach(res.data, function (item) {
+                        if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+                            var datacaptured = $scope.productsSuggest.push(item);
+                        }
+                    });
+                }
+            }, function () {
+                console.warn("search post failed");
+            });
+        };
 
-           $http(productsReq).then(function (res) {
-               $scope.productDetailList = res.data;
-               console.log("initial list");
-           }, function () {
-               console.warn("search post failed");
-           });
-       };
-       $scope.minusQty = function (id) {
-           console.log(cartList);
-           var cartList = $customlocalstorage.getObject('cartlist', '[]');
-           var found = false;
-           angular.forEach(cartList, function (value, index) {
-               if (value.productId === id) {
-                   found = true;
-                   if (cartList[index].Qty <= 1) {
-                       cartList.splice(index, 1);
-                   }
-                 if (cartList[index].Qty != 0) {
-                       cartList[index].Qty--;
-                   }
 
-                else if(cartList[index].Qty == 0)
-                 {
-                     $scope.productShow = false;
-                    console.log("cleared");
+        $scope.logout = function () {
+            localStorage.clear()
+            console.log('logout');
+            $state.go('register');
+        };
 
-               }
-             }            
-           });
+        $ionicPopover.fromTemplateUrl('my-popover.html', {
+            scope: $scope
+        }).then(function (popover) {
+            $scope.popover = popover;
+        });
 
-           $customlocalstorage.setObject('cartlist', cartList);
-           console.log(cartList);
-       };
-       $scope.plusQty = function (id) {
-           console.log(cartList);
-           var cartList = $customlocalstorage.getObject('cartlist', '[]');
-           var found = false;
-           angular.forEach(cartList, function (value, index) {
-               if (value.productId === id) {
-                   found = true;
-                   cartList[index].Qty++;
-               }
-           });
-           if (found == false) {
-               cartList.push({
-                   'productId': id,
-                   'Qty': 1
-               });
-           }
-           $customlocalstorage.setObject('cartlist', cartList);
-         $customlocalstorage.clear;
-         
-         // console.log(cartList.count);
-         
-       };
-       $scope.returnNumber = function (itemid) {
-           var cartList = $customlocalstorage.getObject('cartlist', '[]');
-           var qty = 0;
-           angular.forEach(cartList, function (value, index) {
-               if (value.productId == itemid) {
-                   qty = value.Qty;
-               }
-           });
-           return qty;
-       };
-   }])
+        $scope.openPopover = function ($event) {
+            $scope.popover.show($event);
+            console.log("openPopover");
+        };
+        $scope.closePopover = function () {
+            $scope.popover.hide();
+            console.log("closePopover");
+        };
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function () {
+            $scope.popover.remove();
+            console.log("$destroy");
+        });
+        // Execute action on hide popover
+        $scope.$on('popover.hidden', function () {
+            // Execute action
+            console.log("hidden");
+        });
+        // Execute action on remove popover
+        $scope.$on('popover.removed', function () {
+            // Execute action
+            console.log("removed");
+        });
 
- .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        $scope.refresh = function () {
+            //refresh binding
+            console.log("refresh");
+            $scope.$broadcast("scroll.refreshComplete");
+        };
 
-     $scope.productDetailList = [];
-     
-     $scope.updateCartList = function() {
-         var cartList = $customlocalstorage.getObject('cartlist', '[]');
-         $scope.productDetailList = [];
-         angular.forEach(cartList, function (value, index) {
-             var req = {
-                 method: 'GET',
-                 url: 'http://192.168.1.35:8080/product/' + value.productId,
-             }
-             console.log(req.url);
+        //$scope.setAsDefaultRetailer = function () {
+        //    console.log($customlocalstorage.getObject("defaultRetailer"));
 
-             $http(req).then(function (res) {
-                 $scope.productDetailList.push(res.data);
-             }, function () {
-                 console.warn("search post failed");
-             });
-         });
-         console.log($scope.productDetailList);
-         $scope.productCount = $scope.productDetailList;
-         console.log($scope.productDetailList.length);
+        //    angular.forEach($scope.retailers, function (value, index) {
+        //        if (value.id == $scope.data.choice) {
+        //            $customlocalstorage.setObject("defaultRetailer", value);
+        //        }
+        //    });
 
-     }
-     $scope.updateCartList();
-     $scope.minusQty = function (id) {
-         console.log(cartList);
-         var cartList = $customlocalstorage.getObject('cartlist', '[]');
-         var found = false;
-         angular.forEach(cartList, function (value, index) {
-             if (value.productId === id) {
-                 found = true;
-                 if (cartList[index].Qty <= 1) {
-                     cartList.splice(index, 1);
-                     $scope.updateCartList();
-                 }
-                 else if (cartList[index].Qty != 0) {
-                     cartList[index].Qty--;
-                 }
-             }
-         });
+        //    console.log("set default retailer.");
+        //}
+    }])
 
-         $customlocalstorage.setObject('cartlist', cartList);
-         console.log(cartList);
-        
-     };
-     $scope.plusQty = function (id) {
-         console.log(cartList);
-         var cartList = $customlocalstorage.getObject('cartlist', '[]');
-         var found = false;
-         angular.forEach(cartList, function (value, index) {
-             if (value.productId === id) {
-                 found = true;
-                 cartList[index].Qty++;
-             }
-         });
-         if (found == false) {
-             cartList.push({
-                 'productId': id,
-                 'Qty': 1
-             });
-         }
-         $customlocalstorage.setObject('cartlist', cartList);
-         console.log(cartList);
-     };
-     $scope.returnNumber = function (itemid) {
-         var cartList = $customlocalstorage.getObject('cartlist', '[]');
-         var qty = 0;
-         angular.forEach(cartList, function (value, index) {
-             if (value.productId == itemid) {
-                 qty = value.Qty;
-             }
-            
-         });
-         return qty;
-     };
-     console.log('addToCart');
- }])
+    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('productsuggestionCtrl');
+        $scope.data = { searchkey: '' };
+        $scope.productList = [];
+        $scope.searchList = [];
+        $scope.productDetailList = $scope.parentObj.products;
+        $scope.suggestionShow = false;
+        $scope.productShow = false;
+        $scope.productCount = 0;
+        console.log("loggg");
+        console.log($scope.parentObj.products);
+
+        var req = {
+            method: 'GET',
+            url: 'http://192.168.1.35:8080/product',
+        }
+
+        $http(req).then(function (res) {
+            angular.forEach(res.data, function (item) {
+                $scope.productList.push(item.name);
+            });
+            console.log($scope.productList);
+            console.log("initial list");
+        }, function () {
+            console.warn("search post failed");
+        });
+
+        $scope.searchSuggestion = function () {
+            $scope.suggestionShow = true;
+            $scope.productShow = false;
+            var searchString = $scope.data.searchkey.toLowerCase();
+            console.log("KEY:" + searchString);
+            $scope.searchList = [];
+            angular.forEach($scope.productList, function (item) {
+                if ((item).toLowerCase().indexOf(searchString) !== -1) {
+                    $scope.searchList.push(item);
+                }
+            });
+            console.log($scope.searchList);
+        };
+        $scope.suggestionClick = function (text) {
+
+            $scope.suggestionShow = false;
+            $scope.productShow = true;
+
+            var productsReq = {
+                method: 'GET',
+                url: 'http://192.168.1.35:8080/product/search/' + text,
+            }
+
+            $http(productsReq).then(function (res) {
+                $scope.productDetailList = res.data;
+                console.log("initial list");
+            }, function () {
+                console.warn("search post failed");
+            });
+        };
+        $scope.minusQty = function (id) {
+            console.log(cartList);
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var found = false;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId === id) {
+                    found = true;
+                    if (cartList[index].Qty <= 1) {
+                        cartList.splice(index, 1);
+                    }
+                    if (cartList[index].Qty != 0) {
+                        cartList[index].Qty--;
+                    }
+
+                    else if (cartList[index].Qty == 0) {
+                        $scope.productShow = false;
+                        console.log("cleared");
+
+                    }
+                }
+            });
+            $scope.parentObj.cartCount = cartList.length;
+            console.log($scope.parentObj.cartCount)
+            $customlocalstorage.setObject('cartlist', cartList);
+            console.log(cartList);
+        };
+        $scope.plusQty = function (id) {
+            console.log(cartList);
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var found = false;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId === id) {
+                    found = true;
+                    cartList[index].Qty++;
+                }
+            });
+            if (found == false) {
+                cartList.push({
+                    'productId': id,
+                    'Qty': 1
+                });
+            }
+            $scope.parentObj.cartCount = cartList.length;
+            console.log($scope.parentObj.cartCount)
+            $customlocalstorage.setObject('cartlist', cartList);
+            $customlocalstorage.clear;
+
+            // console.log(cartList.count);
+
+        };
+        $scope.returnNumber = function (itemid) {
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var qty = 0;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId == itemid) {
+                    qty = value.Qty;
+                }
+            });
+            return qty;
+        };
+    }])
+
+    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+
+        $scope.productDetailList = [];
+
+        $scope.updateCartList = function () {
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            $scope.productDetailList = [];
+            angular.forEach(cartList, function (value, index) {
+                var req = {
+                    method: 'GET',
+                    url: 'http://192.168.1.35:8080/product/' + value.productId,
+                }
+                console.log(req.url);
+
+                $http(req).then(function (res) {
+                    $scope.productDetailList.push(res.data);
+                }, function () {
+                    console.warn("search post failed");
+                });
+            });
+            console.log($scope.productDetailList);
+            $scope.productCount = $scope.productDetailList;
+            console.log($scope.productDetailList.length);
+
+        }
+        $scope.updateCartList();
+        $scope.minusQty = function (id) {
+            console.log(cartList);
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var found = false;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId === id) {
+                    found = true;
+                    if (cartList[index].Qty <= 1) {
+                        cartList.splice(index, 1);
+                        $scope.updateCartList();
+                    }
+                    else if (cartList[index].Qty != 0) {
+                        cartList[index].Qty--;
+                    }
+                }
+            });
+            $scope.parentObj.cartCount = cartList.length;
+            console.log($scope.parentObj.cartCount)
+            $customlocalstorage.setObject('cartlist', cartList);
+            console.log(cartList);
+
+        };
+        $scope.plusQty = function (id) {
+            console.log(cartList);
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var found = false;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId === id) {
+                    found = true;
+                    cartList[index].Qty++;
+                }
+            });
+            if (found == false) {
+                cartList.push({
+                    'productId': id,
+                    'Qty': 1
+                });
+            }
+            $scope.parentObj.cartCount = cartList.length;
+            console.log($scope.parentObj.cartCount)
+            $customlocalstorage.setObject('cartlist', cartList);
+            console.log(cartList);
+        };
+        $scope.returnNumber = function (itemid) {
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var qty = 0;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId == itemid) {
+                    qty = value.Qty;
+                }
+
+            });
+            return qty;
+        };
+        console.log('addToCart');
+    }])
 
 .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
     console.log('profileCtrl');

@@ -51,29 +51,36 @@
                 return products;
             },
         };
+    }]).factory('$categoryTree', ['$http', function ($http) {
+        var category = [];
+        $http({
+            method: "GET",
+            url: "http://192.168.1.35:8080/category",
+        }).then(function (res) {
+            category = res.data;
+            angular.forEach(category, function (value, index) {
+                $http({
+                    method: "GET",
+                    url: "http://192.168.1.35:8080/category/segment/" + value.id
+                }).then(function (segmentsRes) {
+                    category[index].segments = segmentsRes.data;
+                    angular.forEach(category[index].segments, function (value2,index2) {
+                        $http({
+                            method: "GET",
+                            url: "http://192.168.1.35:8080/category/segment/subsegment/" + value2.id
+                        }).then(function (subsegmentsRes) {
+                            category[index].segments[index2].subsegment = subsegmentsRes.data;
+                        });
+                    });
+                });
+            });
+        }, function () {
+        });
+        return {
+            getTree: function () {
+                return category;
+            },
+        };
     }])
     ;
-
-
 })();
-
-
-//angular.module('myApp', [])
-//    .service('sharedProperties', function () {
-//        var property = 'First';
-
-//        return {
-//            getProperty: function () {
-//                return property;
-//            },
-//            setProperty: function(value) {
-//                property = value;
-//            }
-//        };
-//    });
-//Using the service in a controller:
-
-//    function Ctrl2($scope, sharedProperties) {
-//        $scope.prop2 = "Second";
-//        $scope.both = sharedProperties.getProperty() + $scope.prop2;
-//    }
