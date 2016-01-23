@@ -155,22 +155,24 @@
             id: '',
             deviceID: ''
         };
+        $scope.form = {
+            gender:"Male"
+        };
 
-        console.log("registerCtrl");
         $scope.register = function (form) {
             console.log(form);
             var reqObj = {
-                email: "venu123cdccd@gmail.com",
-                phone: "123333879",
-                firstName: "venu9v99",
-                surname: "hi99",
-                gender: "M",
+                email: $scope.form.email,
+                phone: $scope.form.phone,
+                firstName: $scope.form.firstName,
+                surname: $scope.form.surname,
+                gender: $scope.form.gender == "Male"? "M":"F",
                 isVerified: 1,
-                latitude: 12,
-                longitude: 78,
-                uuid: "smcust191",
+                latitude: 0,
+                longitude: 0,
+                uuid: device.uuid,
                 message: "success",
-                password: "abcd1234"
+                password: $scope.form.password
             };
 
             var req = {
@@ -186,14 +188,25 @@
                 console.log(res.data);
                 if (res.data.registrationStatus == 'OK') {
                     loginSuccess = true;
-                    $customlocalstorage.setObject('registration', $scope.user)
-                    $customlocalstorage.set('idUserLogedIn', $scope.user.id);
-                    console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                    $customlocalstorage.setObject('registration', res.data.id);
+                    $customlocalstorage.set('idUserLogedIn', 'YES');
+                    //console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                    console.log(res.data);
                 }
                 console.info("registration post success");
             }, function () {
                 console.warn("registration post failed");
             });
+        };
+        $scope.toogleGender = function () {
+            if($scope.form.gender == "Male")
+            {
+                $scope.form.gender = "Female";
+            }
+            else
+            {
+                $scope.form.gender = "Male";
+            }
         };
         $scope.validateID = function () {
             console.log($scope.user.id);
@@ -213,32 +226,18 @@
     .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
         $scope.iderrormessage = '';
         $scope.user = {
-            id: '',
-            deviceID: ''
+            emailOrPhone: '',
+            uuid: ''
         };
 
 
         console.log("loginCtrl");
         $scope.login = function () {
-            $scope.user.deviceID = device.uuid;
             var loginSuccess = false;
-            var reqObj = {
-                "email": "venu999@gmail.com",
-                "phone": "1233336",
-                "firstName": "venu999",
-                "surname": "hi99",
-                "gender": "M",
-                "isVerified": 1,
-                "latitude": 12,
-                "longitude": 78,
-                "uuid": "smcust191",
-                "message": "success",
-                "password": "abcd1234"
-            };
-
+            $scope.user.uuid = device.uuid;
             var req = {
                 method: 'POST',
-                url: 'http://192.168.1.35:36485/api/registation',
+                url: 'http://192.168.1.35:8080/login/add',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -249,8 +248,8 @@
                 console.log(res.data);
                 if (res.data.registrationStatus == 'OK') {
                     loginSuccess = true;
-                    $customlocalstorage.setObject('registration', $scope.user)
-                    $customlocalstorage.set('idUserLogedIn', $scope.user.id);
+                    $customlocalstorage.setObject('registration', $scope.user.id)
+                    $customlocalstorage.set('idUserLogedIn', 'YES');
                     console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
                 }
                 console.info("registration post success");
