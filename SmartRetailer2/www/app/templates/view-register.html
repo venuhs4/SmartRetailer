@@ -1,7 +1,6 @@
 ﻿
-<link href="css/index.css" rel="stylesheet" />
 <ion-view view-title="Register">
-    <ion-header-bar class="bar-header bar-dark">
+    <ion-header-bar class="bar-header bar-royal">
         <div class="title">Registration</div>
         <div class="buttons">
             <button class="button button-clear icon ion-clipboard"></button>
@@ -10,80 +9,6 @@
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
 
-        <form name="signinForm" novalidate="" ng-submit="register(signinForm)">
-
-            <div class="list">
-                <label class="item item-input"
-                       ng-class="{ 'has-error-lr' : signinForm.username.$invalid}">
-                    <span class="input-label">Username</span>
-                    <input type="text"
-                           name="username"
-                           ng-model="user.username"
-                           required>
-                </label>
-
-                <div class="form-errors" ng-show="validateID()">
-                    <div class="form-error">{{iderrormessage}}</div>
-                </div>
-
-                <label class="item item-input"
-                       ng-class="{ 'has-error-lr' : signinForm.address1.$invalid}">
-                    <span class="input-label">Address line 1</span>
-                    <input type="text"
-                           name="address1"
-                           ng-model="user.address1"
-                           required>
-                </label>
-
-                <div class="form-errors" ng-show="validateID()">
-                    <div class="form-error">{{iderrormessage}}</div>
-                </div>
-
-                <label class="item item-input"
-                       ng-class="{ 'has-error-lr' : signinForm.address2.$invalid}">
-                    <span class="input-label">Address line 2</span>
-                    <input type="text"
-                           name="address2"
-                           ng-model="user.address2"
-                           required>
-                </label>
-
-                <div class="form-errors" ng-show="validateID()">
-                    <div class="form-error">{{iderrormessage}}</div>
-                </div>
-
-                <label class="item item-input"
-                       ng-class="{ 'has-error-lr' : signinForm.pincode.$invalid}">
-                    <span class="input-label">Pincode</span>
-                    <input type="text"
-                           name="pincode"
-                           ng-model="user.pincode"
-                           required>
-                </label>
-
-                <div class="form-errors" ng-show="validateID()">
-                    <div class="form-error">{{iderrormessage}}</div>
-                </div>
-
-                <label class="item item-input"
-                       ng-class="{ 'has-error-lr' : signinForm.phone.$invalid}">
-                    <span class="input-label">Phone</span>
-                    <input type="text"
-                           name="phone"
-                           ng-model="user.phone"
-                           required>
-                </label>
-
-                <div class="form-errors" ng-show="validateID()">
-                    <div class="form-error">{{iderrormessage}}</div>
-                </div>
-            </div>
-            <div class="padding">
-                <button class="button button-block button-positive">
-                    Register
-                </button>
-            </div>
-
-        </form>
+       
     </ion-content>
 </ion-view>

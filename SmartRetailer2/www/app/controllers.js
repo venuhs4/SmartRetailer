@@ -3,7 +3,7 @@
 
     angular.module("myapp.controllers", ['myapp.utils', 'ionic'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http","$state", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http,$state) {
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state) {
         $scope.retailer = "";
         $scope.category = [];
         $scope.shownSeg = null;
@@ -16,7 +16,7 @@
             selectedProduct: {}
         };
 
-        
+
         $http({
             method: "GET",
             url: "http://192.168.1.35:8080/category",
@@ -159,21 +159,40 @@
         console.log("registerCtrl");
         $scope.register = function (form) {
             console.log(form);
-            //$state.go('home');
-            var indata = {
-                customerId: 19
-            }
+            var reqObj = {
+                email: "venu123cdccd@gmail.com",
+                phone: "123333879",
+                firstName: "venu9v99",
+                surname: "hi99",
+                gender: "M",
+                isVerified: 1,
+                latitude: 12,
+                longitude: 78,
+                uuid: "smcust191",
+                message: "success",
+                password: "abcd1234"
+            };
 
             var req = {
-                method: 'GET',
-                url: ' http://192.168.1.35:8080/product',
-
+                method: 'PUT',
+                url: 'http://192.168.1.35:8080/register/add',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(reqObj)
             }
 
             $http(req).then(function (res) {
-                console.log(res);
+                console.log(res.data);
+                if (res.data.registrationStatus == 'OK') {
+                    loginSuccess = true;
+                    $customlocalstorage.setObject('registration', $scope.user)
+                    $customlocalstorage.set('idUserLogedIn', $scope.user.id);
+                    console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                }
+                console.info("registration post success");
             }, function () {
-                console.log("failed!");
+                console.warn("registration post failed");
             });
         };
         $scope.validateID = function () {
@@ -203,10 +222,23 @@
         $scope.login = function () {
             $scope.user.deviceID = device.uuid;
             var loginSuccess = false;
+            var reqObj = {
+                "email": "venu999@gmail.com",
+                "phone": "1233336",
+                "firstName": "venu999",
+                "surname": "hi99",
+                "gender": "M",
+                "isVerified": 1,
+                "latitude": 12,
+                "longitude": 78,
+                "uuid": "smcust191",
+                "message": "success",
+                "password": "abcd1234"
+            };
 
             var req = {
                 method: 'POST',
-                url: 'http://localhost:36485/api/registation',
+                url: 'http://192.168.1.35:36485/api/registation',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -306,7 +338,7 @@
     .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', function ($scope, $state, $customlocalstorage, $http, $rootScope) {
         $scope.data = { searchkey: '' };
         $scope.data.choice = '';
-        $scope.retailers = null;
+        $scope.retailers = [];
 
         $scope.refresh = function () {
             //refresh binding
@@ -328,7 +360,7 @@
             $http(req).then(function (res) {
                 var x = +searchString;
                 if (x.toString() === searchString) {
-                    angular.forEach(res.data, function (item) {
+                    angular.forEach(res.data.retailers, function (item) {
                         console.log();
                         if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
@@ -339,7 +371,7 @@
                     });
                 }
                 else {
-                    angular.forEach(res.data, function (item) {
+                    angular.forEach(res.data.retailers, function (item, index) {
                         if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
@@ -372,7 +404,7 @@
             $http(req).then(function (res) {
                 var x = +searchString;
                 if (x.toString() === searchString) {
-                    angular.forEach(res.data, function (item) {
+                    angular.forEach(res.data.retailers, function (item) {
                         if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
@@ -382,7 +414,7 @@
                     });
                 }
                 else {
-                    angular.forEach(res.data, function (item) {
+                    angular.forEach(res.data.retailers, function (item) {
                         if (item.storename.indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
@@ -412,10 +444,14 @@
         };
     }])
 
-    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window) {
+    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", "$ionicSlideBoxDelegate", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window, $ionicSlideBoxDelegate) {
         $scope.data = { searchkey: '' };
         $scope.parentObj.products = $productlist.getProducts();
 
+        $ionicSlideBoxDelegate.slide(0);
+        $ionicSlideBoxDelegate.enableSlide(2000);
+        $ionicSlideBoxDelegate.update();
+        $scope.$apply();
 
         //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
         //    $scope.products = res;
@@ -519,7 +555,10 @@
                 console.warn("search post failed");
             });
         };
-
+        $scope.changeSlide = function (index) {
+            console.log(index);
+            $ionicSlideBoxDelegate.slide(index);
+        };
 
         $scope.logout = function () {
             localStorage.clear()
@@ -698,13 +737,44 @@
     }])
 
     .controller("productDetailCtrl", ["$scope", function ($scope) {
-        $scope.product = {Name:"sdfdsf"};
+        $scope.product = { Name: "sdfdsf" };
     }])
 
     .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
 
         $scope.productDetailList = [];
 
+        $scope.placeOrder = function () {
+            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var orderData = {
+                orderDate: "2016-01-18",
+                customerId: "19",
+                status: 1,
+                orderRequiredDate: "2016-01-19",
+                orderItems: [{
+                    productId: 9,
+                    productName: "Venu Test Item",
+                    count: 10
+                }]
+            };
+
+            var orderReq = {
+                url: "http://192.168.1.35:8080/order/placeOrder",
+                method:"POST",
+                data: JSON.stringify(orderData)
+            };
+
+            $http(orderReq).success(function (res, status) {
+                console.log(res);
+                console.log(status);
+                console.log("post success");
+            }).then(
+            function (data) {
+                console.log(data);
+            }).error(function (data) {
+                console.log(data);
+            });
+        };
         $scope.updateCartList = function () {
             var cartList = $customlocalstorage.getObject('cartlist', '[]');
             $scope.productDetailList = [];

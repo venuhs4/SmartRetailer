@@ -1,173 +1,33 @@
 ﻿<ion-view view-title="Home">
-    <!--<div class="bar bar-header item-input-inset">
-        <label class="item-input-wrapper">
-            <i class="icon ion-ios7-search placeholder-icon"></i>
-            <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
-        </label>
-        <button class="button button-clear" ng-click="search()">
-            Search
-        </button>
-    </div>-->
     <ion-nav-buttons side="primary">
         <a style="color: white;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
         <div>
-
-            <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">                            
-                <span class="badge badge-assertive" ng-show="parentObj.cartCount !== '0'">{{parentObj.cartCount}}</span>          
+            <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">
+                <span class="badge badge-assertive" ng-show="parentObj.cartCount !== 0">{{parentObj.cartCount}}</span>
             </a>
         </div>
-        
-        <!--<a style="color: white;" class="button button-icon icon ion-android-star"></a>-->
-        <!--<button class="button" side="primary">
-            <i class="ion-power"></i>
-        </button>
-
-        <button class="button button button-royal" side="secondary">
-            <i class="ion-search"></i>
-        </button>
-        <button class="button button button-royal" side="primary">
-            <i class="ion-bag"></i>
-        </button>
-        <button class="button button button-royal" side="primary">
-            <i class="ion-ios-alarm-outline"></i>
-        </button>
-        <button class="button button button-royal" side="primary">
-            <i class="ion-android-person"></i>
-        </button>
-
-        <button class="button button button-royal" side="primary">
-            <i class="ion-android-star"></i>
-        </button>-->
-
     </ion-nav-buttons>
-
-    <div class="bar bar-subheader item-input-inset">
-        <label class="item-input-wrapper">
-            <i class="icon ion-android-search placeholder-icon"></i>
-            <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
-        </label>
-        <button class="button button-clear" ng-click="search()">
-            Search
-        </button>
-    </div>
-
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="list">
-
-            <div class="item" ng-repeat="p in products">
-                <div class="row">
-                    <div class="col col-50" style="color:blue">
-                        <strong>{{p.name}}</strong><br />{{p.primaryUse}}<br />{{p.productType}}<br />{{p.segment.category.name}}
-                    </div>
-                    <!--<div class="col col-25">
-                        {{p.toconsumer.mrp}} Rs
-                    </div>-->
-                    <div>
-                        <label>Qty(
-                        <label>Qty({{p.UOM}})</label>
-                        <input class="padding" type="number" placeholder="Qty" />
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ion-slide-box does-continue="true"
+                       auto-play="true"
+                       slide-interval="3000"
+                       show-pager="true"
+                       pager-click="changeSlide(index)">
+            <ion-slide ng-repeat="id in [1,2,3]">
+                <img ng-src="../../images/banner-add ({{id}}).jpg" style="width:300px;height:300px;margin:auto;display:block">
+            </ion-slide>
+        </ion-slide-box>
+        <button class="button button-block">
+            Daily Needs
+        </button>
+        <button class="button button-block">
+            Non-Daily Needs
+        </button>
+        <button class="button button-block">
+            Track Order History
+        </button>
+        <button class="button button-block">
+            Wishlist
+        </button>
     </ion-content>
-    <!--<script id="my-popover.html" type="text/ng-template" >
-
-        <style>
-            body {
-                cursor: url('http://ionicframework.com/img/finger.png'), auto;
-            }
-        </style>
-        <ion-popover-view>
-            <ion-content class="contendheight">
-                <div class="list">
-                    <div class="list">
-                        <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
-                            <i class="icon ion-person"></i>
-                            Profile
-                        </a>
-                        <a class="item item-icon-left" href="#/orders" ng-click="closePopover()">
-                            <i class="icon ion-bag"></i>
-                            Orders
-                        </a>
-                        <a class="item item-icon-left" href="#/settings" ng-click="closePopover()">
-                            <i class="icon ion-android-options"></i>
-                            Settings
-                        </a>
-                        <a class="item item-icon-left" href="#/feedback" ng-click="closePopover()">
-                            <i class="icon ion-compose"></i>
-                            Feedback
-                        </a>
-                        <a class="item item-icon-left" ng-click="logout()" href="#/exit">
-                            <i class="icon ion-close-circled"></i>
-                            Logout
-                        </a>
-                        <a class="item item-icon-left" href="#/exit">
-                            <i class="icon ion-home"></i>
-                            Exit
-                        </a>
-                    </div>
-                </div>
-            </ion-content>
-        </ion-popover-view>
-    </script>-->
-    <!--<ion-content class="has-header padding">
-            <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-            <div class="list">
-                <div class="item" ng-repeat="p in products">
-                    <div class="row">
-                        <div class="col col-50" style="color:purple">
-                            <strong>{{p.name}}</strong><br />{{p.brand}}<br />{{p.category}}
-                        </div>
-                        <div class="col col-25">
-                            {{p.toconsumer.mrp}} Rs
-                        </div>
-                        <div class="col col-25">
-                            <label>Qty({{p.unitOfMeasure}})</label>
-                            <input class="padding" type="number" placeholder="Qty" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ion-content>
-    </ion-view>
-    <script id="my-popover.html" type="text/ng-template">
-        <style>
-            body {
-                cursor: url('http://ionicframework.com/img/finger.png'), auto;
-            }
-        </style>
-        <ion-popover-view>
-            <ion-content class="contendheight">
-                <div class="list">
-                    <div class="list">
-                        <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
-                            <i class="icon ion-person"></i>
-                            Profile
-                        </a>
-                        <a class="item item-icon-left" href="#/orders" ng-click="closePopover()">
-                            <i class="icon ion-bag"></i>
-                            Orders
-                        </a>
-                        <a class="item item-icon-left" href="#/settings" ng-click="closePopover()">
-                            <i class="icon ion-android-options"></i>
-                            Settings
-                        </a>
-                        <a class="item item-icon-left" href="#/feedback" ng-click="closePopover()">
-                            <i class="icon ion-compose"></i>
-                            Feedback
-                        </a>
-                        <a class="item item-icon-left" ng-click="logout()" href="#/exit">
-                            <i class="icon ion-close-circled"></i>
-                            Logout
-                        </a>
-                        <a class="item item-icon-left" href="#/exit">
-                            <i class="icon ion-home"></i>
-                            Exit
-                        </a>
-                    </div>
-                </div>
-            </ion-content>
-        </ion-popover-view>
-    </script>-->
