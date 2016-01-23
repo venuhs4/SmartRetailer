@@ -33,3 +33,11 @@
     height: 80px;
     stroke: #b59751;
 }
+.imgcontainer {
+   width: 48px;
+   height: 48px;
+}
+
+.imgcontainer img {
+   width: 100%;
+}

@@ -4,7 +4,7 @@
     </ion-nav-back-button>
 </ion-nav-bar>
 
-<ion-view>
+<ion-view view-title="">
     <ion-nav-buttons side="primary">
         <label class="item-input">
             <i class="icon ion-android-search placeholder-icon"></i>
@@ -14,35 +14,56 @@
 
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="list" ng-show="suggestionShow">
-            <div class="item" ng-repeat="text in searchList track by $index" ng-click="suggestionClick(text)">
-                <p>{{text}}</p>
-            </div>
-        </div>
-
-        <div class="list card" ng-show="productShow">
-            <div class="item" ng-repeat="item in productDetailList track by $index">
+        <div class="list" ng-if="categoryProductShow" style="padding:1px !important">
+            <div class="item" style="padding:1px !important" ng-repeat="item in parentProducts.products track by $index">
                 <div class="row">
-
-                    <label>Qty</label>  
-                    <div class="col col-25">
-                        <div class="item-avatar">
-                            <img src="../../images/user-male.png" />
-                        </div>
+                    <div class="col col-25 imgcontainer"  ng-click="onProductClick(item)">
+                        <img src="../../images/bag-item-1.png" />
                     </div>
-                    <div class="col col-25">
+                    <div class="col col-50" ng-click="onProductClick(item)">
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
                     <div class="col col-5">
-                        <div class="row row-centre">
-                            <div class="col">
+                        <div class="row row-bottom">
+                            <div class="col col-30">
                                 <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
                             </div>
-                            <div class="col col-25">
-                               {{returnNumber(item.id)}}
+                            <div class="col col-40">
+                                {{returnNumber(item.id)}}
                             </div>
-                            <div class="col">
+                            <div class="col col-30">
+                                <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="list" ng-if="suggestionShow">
+            <div class="item" ng-repeat="text in searchList track by $index" ng-click="suggestionClick(text)">
+                <p>{{text}}</p>
+            </div>
+        </div>
+        <div class="list card" ng-if="productShow">
+            <div class="item" style="padding:1px !important" ng-repeat="item in productDetailList track by $index">
+                <div class="row">
+                    <div class="col col-25 imgcontainer"  ng-click="onProductClick(item)">
+                        <img src="../../images/bag-item-1.png" />
+                    </div>
+                    <div class="col col-50" ng-click="onProductClick(item)">
+                        <h3>{{item.name}}</h3>
+                        <p>{{item.segment.category.name}}</p>
+                    </div>
+                    <div class="col col-25">
+                        <div class="row row-bottom">
+                            <div class="col col-30">
+                                <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
+                            </div>
+                            <div class="col col-40">
+                                {{returnNumber(item.id)}}
+                            </div>
+                            <div class="col col-30">
                                 <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
                             </div>
                         </div>

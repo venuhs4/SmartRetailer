@@ -17,6 +17,7 @@
             <h1 class="title">Menu</h1>
         </header>
         <ion-content class="has-header">
+
             <ion-list>
                 <div ng-repeat="cat in category">
                     <ion-item class="item-stable item-icon-right"
@@ -34,7 +35,7 @@
                                   ng-class="{active:isSegShown(seg)}">
                             &nbsp;&nbsp;<span style="color:#555555">{{seg.segmentname}}</span>
                         </ion-item>
-                        <ion-item nav-clear menu-close class="item-accordion"
+                        <ion-item menu-close class="item-accordion"
                                   ng-repeat="subSeg in seg.subSegments"
                                   ng-show="isSegShown(seg) && isGroupShown(cat)"
                                   ng-click="getProducts(cat.id,seg.id,subSeg.id)" href="#/app/productsuggestion">
@@ -60,7 +61,7 @@
                 </a>
 
 
-                <a class="item item-icon-left" href="#/vendorupdate" ng-click="closePopover()">
+                <a class="item item-icon-left" href="#/retailers" ng-click="closePopover()">
                     <i class="icon ion-android-person-add"></i>
                     Update Vendor
                 </a>
@@ -91,16 +92,29 @@
         transition: 0.2s all linear;
         border: none;
     }
-    .list .item.item-stable{
-        border:none;
+
+    .list .item.item-subsegment {
+        line-height: 38px;
+        border: none;
+        height: 38px;
+        padding: 2px 2px 2px 10px !important;
     }
 
-        .list .item.item-accordion.ng-hide {
-            line-height: 0px;
-        }
+    .list .item.item-stable {
+        border: none;
+    }
 
-        .list .item.item-accordion.ng-hide-add,
-        .list .item.item-accordion.ng-hide-remove {
-            display: block !important;
-        }
+    .item-complex .item-content {
+        padding: 0 0 0 40px !important;
+        border: none;
+    }
+
+    .list .item.item-accordion.ng-hide {
+        line-height: 0px;
+    }
+
+    .list .item.item-accordion.ng-hide-add,
+    .list .item.item-accordion.ng-hide-remove {
+        display: block !important;
+    }
 </style>

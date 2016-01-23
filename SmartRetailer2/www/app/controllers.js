@@ -3,15 +3,20 @@
 
     angular.module("myapp.controllers", ['myapp.utils', 'ionic'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http) {
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http","$state", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http,$state) {
         $scope.retailer = "";
         $scope.category = [];
         $scope.shownSeg = null;
-        $scope.parentProducts = {};
+        $scope.parentProducts = {
+            products: []
+        };
         $scope.parentObj = {
-            cartCount: $customlocalstorage.getObject('cartlist', '[]').length
+            cartCount: $customlocalstorage.getObject('cartlist', '[]').length,
+            prods: ["sdfdsfsd", "dfds"],
+            selectedProduct: {}
         };
 
+        
         $http({
             method: "GET",
             url: "http://192.168.1.35:8080/category",
@@ -25,10 +30,12 @@
             $http({
                 method: "GET",
                 url: "http://192.168.1.35:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
-            }).then(function (res) {
-                $scope.parentProducts.products = res.data;
+            }).success(function (res) {
+                console.log("success");
+                $scope.parentProducts.products = res;
+                $scope.parentObj.prods.push(res);
+                console.log($scope.parentProducts.products);
             });
-            console.log($scope.parentProducts.products);
         }
         $scope.loadSegments = function (cat) {
             if ($scope.shownGroup === cat && cat.segments === undefined) {
@@ -87,9 +94,17 @@
                 return false;
             }
         };
+
         $rootScope.$on("CallSetFooterRetailer", function () {
             $scope.setRetailerFooter();
         });
+
+        $scope.onProductClick = function (item) {
+            console.log(item);
+            $scope.parentObj.selectedProduct = item;
+            $state.go("app.productdetail");
+        };
+
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -297,7 +312,6 @@
             //refresh binding
             $scope.$broadcast("scroll.refreshComplete");
         };
-
         $scope.search = function () {
             $scope.retailers = [];
             var searchString = $scope.data.searchkey.toLowerCase();
@@ -315,11 +329,12 @@
                 var x = +searchString;
                 if (x.toString() === searchString) {
                     angular.forEach(res.data, function (item) {
+                        console.log();
                         if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
                         else {
-                            console.log();
+
                         }
                     });
                 }
@@ -328,13 +343,13 @@
                         if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
                             $scope.retailers.push(item);
                         }
+                        console.log(item);
                     });
                 }
             }, function () {
                 console.warn("search post failed");
             });
         };
-
         $scope.searchSuggestion = function () {
             console.log("suggestion called");
             $scope.retailers = [];
@@ -377,12 +392,10 @@
                 console.warn("suggestion post failed");
             });
         };
-
         $scope.closePopover = function () {
             $scope.popover.hide();
             console.log("closePopover from retailer");
         };
-
         $scope.setAsDefaultRetailer = function () {
             console.log($customlocalstorage.getObject("defaultRetailer"));
 
@@ -568,12 +581,11 @@
         $scope.data = { searchkey: '' };
         $scope.productList = [];
         $scope.searchList = [];
-        $scope.productDetailList = $scope.parentObj.products;
+        $scope.productDetailList = $scope.parentProducts.products;
         $scope.suggestionShow = false;
         $scope.productShow = false;
+        $scope.categoryProductShow = true;
         $scope.productCount = 0;
-        console.log("loggg");
-        console.log($scope.parentObj.products);
 
         var req = {
             method: 'GET',
@@ -593,6 +605,13 @@
         $scope.searchSuggestion = function () {
             $scope.suggestionShow = true;
             $scope.productShow = false;
+            $scope.categoryProductShow = false;
+
+            //if ($scope.data.searchkey.length <3)
+            //{
+            //    return;
+            //}
+
             var searchString = $scope.data.searchkey.toLowerCase();
             console.log("KEY:" + searchString);
             $scope.searchList = [];
@@ -607,7 +626,7 @@
 
             $scope.suggestionShow = false;
             $scope.productShow = true;
-
+            $scope.categoryProductShow = false;
             var productsReq = {
                 method: 'GET',
                 url: 'http://192.168.1.35:8080/product/search/' + text,
@@ -665,10 +684,6 @@
             $scope.parentObj.cartCount = cartList.length;
             console.log($scope.parentObj.cartCount)
             $customlocalstorage.setObject('cartlist', cartList);
-            $customlocalstorage.clear;
-
-            // console.log(cartList.count);
-
         };
         $scope.returnNumber = function (itemid) {
             var cartList = $customlocalstorage.getObject('cartlist', '[]');
@@ -680,6 +695,10 @@
             });
             return qty;
         };
+    }])
+
+    .controller("productDetailCtrl", ["$scope", function ($scope) {
+        $scope.product = {Name:"sdfdsf"};
     }])
 
     .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
@@ -765,62 +784,63 @@
         console.log('addToCart');
     }])
 
-.controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('profileCtrl');
-}])
+    .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('profileCtrl');
+    }])
 
-.controller("ordersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('ordersCtrl');
-}])
+    .controller("ordersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('ordersCtrl');
+    }])
 
-.controller("settingsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('settingsCtrl');
-}])
+    .controller("settingsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('settingsCtrl');
+    }])
 
-.controller("feedbackCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('feedbackCtrl');
-}])
+    .controller("feedbackCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('feedbackCtrl');
+    }])
 
-.controller("legalCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('legalCtrl');
-}])
- .controller("updateVendorCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-     console.log('updateVendorCtrl');
- }])
-.controller("rateAppCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("legalCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('legalCtrl');
+    }])
 
-    console.log('rateAppCtrl');
-}])
+    .controller("updateVendorCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('updateVendorCtrl');
+    }])
 
-.controller("contactUsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-    console.log('contactUsCtrl');
-}])
+    .controller("rateAppCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
 
-//errorCtrl managed the display of error messages bubbled up from other controllers, directives, myappService
-.controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
-    //public properties that define the error message and if an error is present
-    $scope.error = "";
-    $scope.activeError = false;
+        console.log('rateAppCtrl');
+    }])
 
-    //function to dismiss an active error
-    $scope.dismissError = function () {
+    .controller("contactUsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        console.log('contactUsCtrl');
+    }])
+
+    .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
+        //public properties that define the error message and if an error is present
+        $scope.error = "";
         $scope.activeError = false;
-    };
 
-    //broadcast event to catch an error and display it in the error section
-    $scope.$on("error", function (evt, val) {
-        //set the error message and mark activeError to true
-        $scope.error = val;
-        $scope.activeError = true;
+        //function to dismiss an active error
+        $scope.dismissError = function () {
+            $scope.activeError = false;
+        };
 
-        //stop any waiting indicators (including scroll refreshes)
-        myappService.wait(false);
-        $scope.$broadcast("scroll.refreshComplete");
+        //broadcast event to catch an error and display it in the error section
+        $scope.$on("error", function (evt, val) {
+            //set the error message and mark activeError to true
+            $scope.error = val;
+            $scope.activeError = true;
 
-        //manually apply given the way this might bubble up async
-        $scope.$apply();
-    });
-}]);
+            //stop any waiting indicators (including scroll refreshes)
+            myappService.wait(false);
+            $scope.$broadcast("scroll.refreshComplete");
+
+            //manually apply given the way this might bubble up async
+            $scope.$apply();
+        });
+    }]);
 
 
 })();

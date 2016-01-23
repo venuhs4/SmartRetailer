@@ -1,4 +1,5 @@
-﻿(function () {
+﻿/// <reference path="templates/view-product-detail.html" />
+(function () {
     "use strict";
 
     angular.module("myapp", ["ionic", "myapp.controllers", "myapp.services"])
@@ -62,6 +63,10 @@
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
                 
+            }).state("app.productdetail", {
+                url: "/productdetail",
+                templateUrl: "app/templates/view-product-detail.html",
+                controller: "productDetailCtrl"
             }).state("app.productsuggestion", {
                 url: "/productsuggestion",
                 templateUrl: "app/templates/view-productsuggestion.html",

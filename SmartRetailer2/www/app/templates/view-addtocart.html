@@ -2,32 +2,29 @@
     <ion-nav-back-button>
     </ion-nav-back-button>
 </ion-nav-bar>
-<ion-view>
+<ion-view view-title="My Cart">
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
 
         <div class="list card">
-            <div class="item" ng-repeat="item in productDetailList">
-                <div class="row" >
-                    <label>Qty</label>
-                    <div class="col col-25">
-                        <div class="item-avatar">
-                            <img src="../../images/user-male.png" />
-                        </div>
+            <div class="item" style="padding:1px !important" ng-repeat="item in productDetailList">
+                <div class="row">
+                    <div class="col col-25 imgcontainer" ng-click="onProductClick(item)">
+                        <img src="../../images/bag-item-1.png" />
                     </div>
-                    <div class="col col-25">
+                    <div class="col col-50" ng-click="onProductClick(item)">
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
-                    <div class="col col-50">
-                        <div class="row row-centre">
-                            <div class="col">
+                    <div class="col col-5">
+                        <div class="row row-bottom">
+                            <div class="col col-30">
                                 <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
                             </div>
-                            <div class="col col-25">
+                            <div class="col col-40">
                                 {{returnNumber(item.id)}}
                             </div>
-                            <div class="col">
+                            <div class="col col-30">
                                 <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
                             </div>
                         </div>
