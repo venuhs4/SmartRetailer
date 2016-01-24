@@ -156,7 +156,7 @@
             deviceID: ''
         };
         $scope.form = {
-            gender:"Male"
+            gender: "Male"
         };
 
         $scope.register = function (form) {
@@ -166,7 +166,7 @@
                 phone: $scope.form.phone,
                 firstName: $scope.form.firstName,
                 surname: $scope.form.surname,
-                gender: $scope.form.gender == "Male"? "M":"F",
+                gender: $scope.form.gender == "Male" ? "M" : "F",
                 isVerified: 1,
                 latitude: 0,
                 longitude: 0,
@@ -199,12 +199,10 @@
             });
         };
         $scope.toogleGender = function () {
-            if($scope.form.gender == "Male")
-            {
+            if ($scope.form.gender == "Male") {
                 $scope.form.gender = "Female";
             }
-            else
-            {
+            else {
                 $scope.form.gender = "Male";
             }
         };
@@ -443,20 +441,39 @@
         };
     }])
 
-    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", "$ionicSlideBoxDelegate", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window, $ionicSlideBoxDelegate) {
+    .controller("productsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$ionicPopover", "$productlist", "$window", "$ionicSlideBoxDelegate", "$popupService", function ($scope, $state, $customlocalstorage, $http, $ionicPopover, $productlist, $window, $ionicSlideBoxDelegate, $popupService) {
         $scope.data = { searchkey: '' };
         $scope.parentObj.products = $productlist.getProducts();
+        $scope.popupData = {
+            confirm: false,
+            resposneData:''
+        };
 
         $ionicSlideBoxDelegate.slide(0);
         $ionicSlideBoxDelegate.enableSlide(2000);
-        $ionicSlideBoxDelegate.update();
-        $scope.$apply();
+        //$ionicSlideBoxDelegate.update();
+        //$scope.$apply();
 
         //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
         //    $scope.products = res;
         //     console.log(res)
         //});
+        $scope.showPopup = function () {
+            var ret = $popupService.showConfirm("Title", "Templete", $scope.popupData);
+            ret.then(function (e) {
+                console.log("then");
+                console.log($scope.popupData.confirm);
+            });
+        };
+        $scope.showAlert = function () {
 
+            $http.get("http://www.google.com").then(function (res) {
+                $popupService.showAlert("Success", JSON.stringify(res.data));
+            }, function (res) {
+                $popupService.showAlert("Fail", JSON.stringify(res));
+            })
+            //var ret = $popupService.showAlert("Title", "This is the text from the called method. This the test to make the text <b>BOLD</>.");
+        };
         $scope.search = function () {
 
             $scope.products = [];
@@ -759,7 +776,7 @@
 
             var orderReq = {
                 url: "http://192.168.1.35:8080/order/placeOrder",
-                method:"POST",
+                method: "POST",
                 data: JSON.stringify(orderData)
             };
 
@@ -769,8 +786,6 @@
                 console.log("post success");
             }).then(
             function (data) {
-                console.log(data);
-            }).error(function (data) {
                 console.log(data);
             });
         };

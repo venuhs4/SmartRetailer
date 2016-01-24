@@ -30,9 +30,6 @@
             getObject: function (key) {
                 return JSON.parse($window.localStorage[key] || '{}');
             },
-            getObject: function (key, defaultValue) {
-                return JSON.parse($window.localStorage[key] || defaultValue);
-            }
         };
 
         return $customlocalstorage;
@@ -64,7 +61,7 @@
                     url: "http://192.168.1.35:8080/category/segment/" + value.id
                 }).then(function (segmentsRes) {
                     category[index].segments = segmentsRes.data;
-                    angular.forEach(category[index].segments, function (value2,index2) {
+                    angular.forEach(category[index].segments, function (value2, index2) {
                         $http({
                             method: "GET",
                             url: "http://192.168.1.35:8080/category/segment/subsegment/" + value2.id
@@ -80,6 +77,41 @@
             getTree: function () {
                 return category;
             },
+        };
+    }])
+    .factory('$popupService', ['$ionicPopup', '$timeout','$http', function ($ionicPopup, $timeout,$http) {
+        return {
+            showConfirm: function (title, template, data) {
+
+                var confirm = $ionicPopup.show({
+                    template: template,
+                    title: title,
+                    buttons: [{
+                        text: 'No',
+                        type: 'button-assertive',
+                        onTap: function (e) {
+                            data.confirm = false;
+                            console.log(false);
+                        }
+                    }, {
+                        text: '<b>Yes</b>',
+                        type: 'button-positive',
+                        onTap: function (e) {
+                            data.confirm = true;
+                            console.log(true);
+                        }
+                    }
+                    ]
+                });
+                return confirm;
+            },
+            showAlert: function (title, template) {
+                var alertPopup = $ionicPopup.alert({
+                    title: title,
+                    template: template
+                });
+                return alertPopup;
+            }
         };
     }])
     ;
