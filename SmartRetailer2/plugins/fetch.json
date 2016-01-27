@@ -46,5 +46,22 @@
         },
         "is_top_level": false,
         "variables": {}
+    },
+    "pushbots-cordova-plugin": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pushbots/phonegap.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-android-support-v4": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-android-support-v4"
+        },
+        "is_top_level": false,
+        "variables": {}
     }
 }

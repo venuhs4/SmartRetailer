@@ -39,6 +39,11 @@
                 abstract: true,
                 templateUrl: "app/templates/view-menu.html",
                 controller: "appCtrl"
+            }).
+            state("initial", {
+                url: "/initial",
+                templateUrl: "app/templates/view-initial.html",
+                controller: "initialCtrl"
             })
             .state("register", {
                 url: "/register",

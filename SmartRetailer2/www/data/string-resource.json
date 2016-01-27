@@ -1,0 +1,14 @@
+﻿[
+  {
+    "Key": "AgreeTerms",
+    "Value": "You cannot poceed until you agree for Terms & Conditions. refer \"http://smartretail/temrs\" for more detail"
+  },
+  {
+    "Key": "NetworkUnavailable",
+    "Value": "Network not available"
+  },
+  {
+    "Key": "orderconfirm",
+    "Value": "Do you really want to place the order now?"
+  }
+]

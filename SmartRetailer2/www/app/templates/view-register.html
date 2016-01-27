@@ -9,14 +9,14 @@
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
         <div class="list list-inset" style="padding:2px">
-            <label class="item item-input">
-                <input type="text" placeholder="First Name" ng-model="form.firstName">
+            <label class="item item-input" ng-focus="form.fnvalidation = true">
+                <input type="text" placeholder="First Name" name="firstname" ng-model="form.firstName">
             </label>
             <label class="item item-input">
                 <input type="text" placeholder="Last Name" ng-model="form.surname">
             </label>
             <label class="item item-input">
-                <input type="email" placeholder="Email" ng-model="form.email">
+                <input type="text" placeholder="Email" ng-model="form.email">
             </label>
             <label class="item item-input">
                 <input type="text" placeholder="Phone" ng-model="form.phone">
@@ -27,8 +27,8 @@
             <label class="item item-input">
                 <input type="password" placeholder="Password" ng-model="form.againpassword">
             </label>
-            <button class="button button-block item-icon-left" 
-                    ng-model="form.gender" 
+            <button class="button button-block item-icon-left"
+                    ng-model="form.gender"
                     ng-click="toogleGender()">
                 <i class="icon" ng-class="form.gender == 'Male' ? 'ion-man' : 'ion-woman'"></i>
                 {{form.gender}}
@@ -37,6 +37,10 @@
         <button class="button button-block button-positive" ng-click="register()">
             Register
         </button>
-       
     </ion-content>
 </ion-view>
+<style type="text/css">
+    .error-tag {
+        color: red;
+    }
+</style>

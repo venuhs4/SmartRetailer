@@ -1,12 +1,33 @@
 ﻿(function () {
     "use strict";
 
-    angular.module("myapp.controllers", ['myapp.utils', 'ionic'])
+    angular.module("myapp.controllers", ['myapp.utils', 'ionic', 'ngCordova'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state) {
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService) {
         $scope.retailer = "";
         $scope.category = [];
         $scope.shownSeg = null;
+        console.log($scope.sampleData);
+
+        var posOptions = {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
+        };
+        console.log($cordovaGeolocation);
+        $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+            var lat = position.coords.latitude;
+            var long = position.coords.longitude;
+
+            $popupService.showAlert("Gro Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>");
+            console.log(posOptions);
+        }, function (err) {
+            $popupService.showAlert("Gro Fail", JSON.stringify(err));
+            console.log("position fail");
+            console.log(err);
+        });
+
+
         $scope.parentProducts = {
             products: []
         };
@@ -149,7 +170,25 @@
     }
     ])
 
-    .controller("registerCtrl", ["$scope", "$state", "$http", function ($scope, $state, $http) {
+    .controller("initialCtrl", ["$scope", "$customlocalstorage", "$state", "$popupService", "$stringResource", function ($scope, $customlocalstorage, $state, $popupService, $stringResource) {
+        $scope.data = {
+            agree: true
+        };
+        $scope.proceed = function () {
+            if ($scope.data.agree) {
+                $state.go("retailers");
+            }
+            else {
+                var value = $stringResource.getValue('AgreeTerms');
+                $popupService.showAlert("<b>Alert!</b>", value);
+            }
+        };
+        $scope.gotoRetailers = function () {
+            $state.go("retailers");
+        }
+    }])
+
+    .controller("registerCtrl", ["$scope", "$state", "$http", "$popupService", function ($scope, $state, $http, $popupService) {
         $scope.iderrormessage = '';
         $scope.user = {
             id: '',
@@ -159,44 +198,73 @@
             gender: "Male"
         };
 
-        $scope.register = function (form) {
-            console.log(form);
-            var reqObj = {
-                email: $scope.form.email,
-                phone: $scope.form.phone,
-                firstName: $scope.form.firstName,
-                surname: $scope.form.surname,
-                gender: $scope.form.gender == "Male" ? "M" : "F",
-                isVerified: 1,
-                latitude: 0,
-                longitude: 0,
-                uuid: device.uuid,
-                message: "success",
-                password: $scope.form.password
-            };
-
-            var req = {
-                method: 'PUT',
-                url: 'http://192.168.1.35:8080/register/add',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(reqObj)
+        $scope.validateForm = function () {
+            var popupContent = '';
+            if ($scope.form.firstName === undefined || $scope.form.firstName.length < 3) {
+                popupContent = popupContent.concat("<li>First name must have correct value.</li>");
+            }
+            if ($scope.form.surname === undefined || $scope.form.firstName.length < 3) {
+                popupContent = popupContent.concat("<li>Last name must have correct value.</li>");
+            }
+            if ($scope.form.email === undefined || !$scope.form.email.match(/^[\w|\d|\._]{4,}@[\w|\d|\._]{2,}\.[\w|\d|\._]+$/g)) {
+                popupContent = popupContent.concat("<li>Enter Correct email address</li>");
+            }
+            if ($scope.form.phone === undefined || !$scope.form.phone.match(/^(\+\d{1,3})?-?\d{10}$/)) {
+                popupContent = popupContent.concat("<li>Enter correct phone number</li>");
+            }
+            if ($scope.form.password === undefined || $scope.form.password.length<5) {
+                popupContent = popupContent.concat("<li>Enter the correct password</li>");
+            }
+            if ($scope.form.againpassword === $scope.form.password) {
+                popupContent = popupContent.concat("<li>Passwords do not match</li>");
             }
 
-            $http(req).then(function (res) {
-                console.log(res.data);
-                if (res.data.registrationStatus == 'OK') {
-                    loginSuccess = true;
-                    $customlocalstorage.setObject('registration', res.data.id);
-                    $customlocalstorage.set('idUserLogedIn', 'YES');
-                    //console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
-                    console.log(res.data);
+            if (popupContent !== '') {
+                $popupService.showAlert('Validation Error<i class="icon item-icon-left"></i>', popupContent);
+            }
+            return false;
+        }
+        $scope.register = function (form) {
+
+            if ($scope.validateForm()) {
+                console.log(form);
+                var reqObj = {
+                    email: $scope.form.email,
+                    phone: $scope.form.phone,
+                    firstName: $scope.form.firstName,
+                    surname: $scope.form.surname,
+                    gender: $scope.form.gender == "Male" ? "M" : "F",
+                    isVerified: 1,
+                    latitude: 0,
+                    longitude: 0,
+                    uuid: device.uuid,
+                    message: "success",
+                    password: $scope.form.password
+                };
+
+                var req = {
+                    method: 'PUT',
+                    url: 'http://192.168.1.35:8080/register/add',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(reqObj)
                 }
-                console.info("registration post success");
-            }, function () {
-                console.warn("registration post failed");
-            });
+
+                $http(req).then(function (res) {
+                    console.log(res.data);
+                    if (res.data.registrationStatus == 'OK') {
+                        loginSuccess = true;
+                        $customlocalstorage.setObject('registration', res.data.id);
+                        $customlocalstorage.set('idUserLogedIn', 'YES');
+                        //console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                        console.log(res.data);
+                    }
+                    console.info("registration post success");
+                }, function () {
+                    console.warn("registration post failed");
+                });
+            }
         };
         $scope.toogleGender = function () {
             if ($scope.form.gender == "Male") {
@@ -344,82 +412,32 @@
         $scope.search = function () {
             $scope.retailers = [];
             var searchString = $scope.data.searchkey.toLowerCase();
-            var keyObj = {
-                Key: $scope.data.searchkey,
-                device: device.uuid
-            };
-
-            var req = {
-                method: 'GET',
-                url: 'http://192.168.1.35:8080/retailer/all',
+            var x = +searchString;
+            //search by zip code
+            if (x.toString() === searchString) {
+                $http.get("http://192.168.1.35:8080/retailer/storelike/" + searchString).then(function (res) {
+                    $scope.retailers = res.data;
+                    console.log($scope.retailers);
+                }, function (err) {
+                    console.log("erroe while fecthing the retailser by storename");
+                    console.log(err);
+                });
+            }
+                //search by store name + area
+            else {
+                $http.get("http://192.168.1.35:8080/retailer/storelike/" + searchString).then(function (res) {
+                    $scope.retailers = res.data;
+                    console.log($scope.retailers);
+                }, function (err) {
+                    console.log("erroe while fecthing the retailser by storename");
+                    console.log(err);
+                });
             }
 
-            $http(req).then(function (res) {
-                var x = +searchString;
-                if (x.toString() === searchString) {
-                    angular.forEach(res.data.retailers, function (item) {
-                        console.log();
-                        if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
-                            $scope.retailers.push(item);
-                        }
-                        else {
-
-                        }
-                    });
-                }
-                else {
-                    angular.forEach(res.data.retailers, function (item, index) {
-                        if (item.storename.toLowerCase().indexOf(searchString) !== -1) {
-                            $scope.retailers.push(item);
-                        }
-                        console.log(item);
-                    });
-                }
-            }, function () {
-                console.warn("search post failed");
-            });
         };
         $scope.searchSuggestion = function () {
             console.log("suggestion called");
-            $scope.retailers = [];
-            var searchString = $scope.data.searchkey.toLowerCase();
 
-            if (searchString == "") {
-                $scope.retailers = [];
-                return;
-            }
-            var keyObj = {
-                Key: $scope.data.searchkey,
-                device: device.uuid
-            };
-
-            var req = {
-                method: 'GET',
-                url: 'http://192.168.1.35:8080/retailer/all',
-            }
-
-            $http(req).then(function (res) {
-                var x = +searchString;
-                if (x.toString() === searchString) {
-                    angular.forEach(res.data.retailers, function (item) {
-                        if (("" + item.storeaddress.zipCode).toLowerCase().indexOf(searchString) !== -1) {
-                            $scope.retailers.push(item);
-                        }
-                        else {
-                            console.log();
-                        }
-                    });
-                }
-                else {
-                    angular.forEach(res.data.retailers, function (item) {
-                        if (item.storename.indexOf(searchString) !== -1) {
-                            $scope.retailers.push(item);
-                        }
-                    });
-                }
-            }, function () {
-                console.warn("suggestion post failed");
-            });
         };
         $scope.closePopover = function () {
             $scope.popover.hide();
@@ -446,7 +464,7 @@
         $scope.parentObj.products = $productlist.getProducts();
         $scope.popupData = {
             confirm: false,
-            resposneData:''
+            resposneData: ''
         };
 
         $ionicSlideBoxDelegate.slide(0);
@@ -756,37 +774,48 @@
         $scope.product = { Name: "sdfdsf" };
     }])
 
-    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
 
         $scope.productDetailList = [];
-
+        $scope.data = {
+            confirm: false
+        };
         $scope.placeOrder = function () {
-            var cartList = $customlocalstorage.getObject('cartlist', '[]');
-            var orderData = {
-                orderDate: "2016-01-18",
-                customerId: "19",
-                status: 1,
-                orderRequiredDate: "2016-01-19",
-                orderItems: [{
-                    productId: 9,
-                    productName: "Venu Test Item",
-                    count: 10
-                }]
-            };
+            $popupService.showConfirm("Order Confirmation", $stringResource.getValue("orderconfirm"), $scope.data)
+            .then(function () {
+                if ($scope.data.confirm) {
+                    var cartList = $customlocalstorage.getObject('cartlist', '[]');
+                    var orderData = {
+                        orderDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
+                        customerId: "19",
+                        status: 1,
+                        orderRequiredDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
+                        orderItems: []
+                    };
 
-            var orderReq = {
-                url: "http://192.168.1.35:8080/order/placeOrder",
-                method: "POST",
-                data: JSON.stringify(orderData)
-            };
+                    angular.forEach(cartList, function (value, index) {
+                        orderData.orderItems.push({
+                            productId: value.productId,
+                            productName: "Get product name by ID",
+                            count: value.Qty
+                        });
+                    });
 
-            $http(orderReq).success(function (res, status) {
-                console.log(res);
-                console.log(status);
-                console.log("post success");
-            }).then(
-            function (data) {
-                console.log(data);
+                    var orderReq = {
+                        url: "http://192.168.1.35:8080/order/placeOrder",
+                        method: "POST",
+                        data: JSON.stringify(orderData)
+                    };
+                    console.log(orderData);
+                    $http(orderReq).success(function (res, status) {
+                        console.log(res);
+                        console.log(status);
+                        console.log("post success");
+                    }).then(
+                    function (data) {
+                        console.log(data);
+                    });
+                }
             });
         };
         $scope.updateCartList = function () {

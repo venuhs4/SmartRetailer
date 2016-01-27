@@ -79,7 +79,7 @@
             },
         };
     }])
-    .factory('$popupService', ['$ionicPopup', '$timeout','$http', function ($ionicPopup, $timeout,$http) {
+    .factory('$popupService', ['$ionicPopup', '$timeout', '$http', function ($ionicPopup, $timeout, $http) {
         return {
             showConfirm: function (title, template, data) {
 
@@ -114,5 +114,25 @@
             }
         };
     }])
-    ;
+    .factory('$stringResource', ["$http", function ($http) {
+        var allstrings = [];
+        $http.get("/data/string-resource.json").then(function (res) {
+            allstrings = res.data;
+        }, function (err) {
+            console.log(err);
+        });
+
+        return {
+            getValue: function (k) {
+                var finValue = '';
+                angular.forEach(allstrings, function (val, index) {
+                    if (val.Key === k) {
+                        console.log(val.Value);
+                        finValue = val.Value;
+                    }
+                });
+                return finValue;
+            }
+        }
+    }]);
 })();
