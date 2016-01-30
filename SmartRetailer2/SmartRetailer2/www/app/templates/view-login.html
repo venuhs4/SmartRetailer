@@ -1,0 +1,24 @@
+﻿
+<link href="css/index.css" rel="stylesheet" />
+<ion-view view-title="login">
+    <ion-header-bar class="bar-header bar-dark">
+        <div class="title">Login</div>
+        <div class="buttons">
+            <button class="button button-clear icon ion-person"></button>
+        </div>
+    </ion-header-bar>
+    <ion-content class="padding">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        <form name="signinForm" novalidate="" ng-submit="login()">
+
+            <div class="list list-inset">
+                <label class="item item-input">
+                    <input type="text" ng-model="data.phone" placeholder="Phone">
+                </label>
+            </div>
+            <button class="button button-block button-positive" ng-click="proceed()">
+                Proceed
+            </button>
+        </form>
+    </ion-content>
+</ion-view>
