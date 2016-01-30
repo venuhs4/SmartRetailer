@@ -329,7 +329,7 @@
     .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $popupService, $stringResource) {
         $scope.data = {};
         $scope.proceed = function () {
-            console.log("proceed start");
+            //console.log("proceed start");
             $http.post('http://192.168.1.45:8080/user/login', {
                 mobileNo: $scope.data.phone,
                 uuid: device.uuid
@@ -362,7 +362,7 @@
             }, function (err) {
                 $popupService.showAlert('Error', err);
             });
-            console.log("proceed complete");
+            //console.log("proceed complete");
         };
     }])
 
