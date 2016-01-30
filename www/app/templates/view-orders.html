@@ -1,0 +1,17 @@
+﻿<ion-view view-title="orders">
+    <ion-header-bar class="bar-header bar-dark">
+        <div class="buttons">
+            <button class="button button-clear icon ion-bag"></button>
+        </div>
+        <div class="title">Orders</div>
+    </ion-header-bar>
+    <ion-content class="padding">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        <div class="list card">
+            <a href="#" class="item item-icon-left" ng-repeat="item in ['Item 1','Item 2','Item 3','Item 4','Item 5','Item 6','Item 7']">
+                <i class="icon ion-coffee"></i>
+                {{item}}
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

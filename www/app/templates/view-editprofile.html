@@ -1,0 +1,135 @@
+﻿<ion-nav-bar>
+    <ion-nav-back-button>
+    </ion-nav-back-button>
+</ion-nav-bar>
+
+<ion-view view-title="Edit Profile">
+    <ion-content class="has-header padding" ng-controller="editprofileCtrl">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+
+        <!--<div class="circle-mask" style="background-image:none;">
+            <canvas id="canvas" class="circle" width="96" height="96"></canvas>
+        <!--<label>Photo</label>-->
+        <div class="item-icon-right">
+            <a class="item item-icon-right" ng-click="addImage()">
+                Change Profile Picture
+                <img src="../../images/user-male.png" width="50" align="right" />
+                <!--<div class="cropArea">
+                    <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+
+                </div>-->
+                <!--<div>Cropped Image:</div>
+                <div><img ng-src="{{myCroppedImage}}" /></div>-->
+                <!---->
+                <!--<div ng-repeat="image in images" style="height:50px">
+                    <img src={{urlForImage(image)}} />
+                </div>-->
+            </a>
+        </div>
+
+
+        <!--<div cl
+         as
+         s="item item-button-right">
+             Edit Your profile Photo
+             <button class="item item-avatar" ng-click="addImage()">
+
+             </button>
+             </div>-->
+        <!--<ion-scroll>
+            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" style="height:200px"/>
+        </ion-scroll>-->
+        <!--</div>-->
+        <div class="list">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Phone Number</span>
+                <input type="text" placeholder="Phone Number">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Address Line 1</span>
+                <input type="text" placeholder="Address Line 1">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Address Line 2</span>
+                <input type="text" placeholder="Address Line 2">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Pin Code</span>
+                <input type="text" placeholder="Pin Code">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Alt. Ph Number</span>
+                <input type="text" placeholder="Alt. Ph Number">
+            </label>
+        </div>
+
+        <!--<div>
+
+
+
+            <button class="button-positive">
+                Preference
+                <i class="ion-android-add-circle"></i>
+                <ion-list>
+                    <div ng-repeat="prefer in addpreference"></div>
+                    <ion-item class="item-stable" ng-click="toggleGroup(group)">
+                        <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
+                        &nbsp;
+                        Group 1
+                    </ion-item>
+                    <ion-item class="item-accordion"
+                              ng-repeat="item in group.items"
+                              ng-show="isGroupShown(group)">
+
+                    </ion-item>
+
+
+                </ion-list>
+
+            </button>
+
+
+        </div>-->
+
+        <io-content>
+            <ion-list>
+                Preferences
+                <div ng-repeat="payment in paymentoption">
+                    <ion-item class="item-stable"
+                              ng-click="toggleGroup(payment)"
+                              ng-class="{active: isGroupShown(group)}">
+                        <i class="icon" ng-class="isGroupShown(payment) ? 'ion-minus' : 'ion-plus'"></i>
+                        &nbsp;
+                        <ion-item class="item-accordion"
+                                  ng-repeat="itemtype in payment.paymentoptions"
+                                  ng-show="isGroupShown(itemtype)">
+                            <!--<ion-checkbox ng-model="filter.blue">  {{item}}</ion-checkbox>-->
+                        </ion-item>
+                       
+                    </ion-item>
+                    <ion-item class="item-accordion"
+                              ng-repeat="item in payment.paymentoptions"
+                              ng-show="isGroupShown(payment)">
+                        <ion-checkbox ng-model="filter.blue">{{item}}</ion-checkbox>
+                    </ion-item>
+
+                    <ion-item class="item-accordion"
+                              ng-repeat="item in payment.deliverytime"
+                              ng-show="isGroupShown(payment)">
+                        <ion-radio ng-model="choice">{{item}}</ion-radio>
+                    </ion-item>
+
+                </div>
+
+            </ion-list>
+            later
+
+        </io-content>
+        <button class="button button-block button-positive" ng-click="updateProfile()">
+            SAVE
+        </button>
+        <br />
+    </ion-content>
+</ion-view>
+
+

@@ -1,0 +1,8 @@
+[
+  {
+    "paymentoptions": [ "CreditCard", "Debit Card", "Vouchers", "Cash" ]
+  },
+  {
+    "deliverytime": [ "Morning", "Afternoon", "Evening " ]
+  }
+]

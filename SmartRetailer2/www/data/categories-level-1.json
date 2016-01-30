@@ -1,0 +1,298 @@
+﻿[
+  {
+    "ID": "1",
+    "Name": "Fruits & Vegetables",
+    "SubCategory": [
+      {
+        "ID": "1",
+        "Name": "Cut Fruits & Vegetables",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "2",
+        "Name": "F&V Combo",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "3",
+        "Name": "Flowers",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "4",
+        "Name": "Fresho Ayurveda",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "5",
+        "Name": "Fruits  arrow",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "6",
+        "Name": "Fruits",
+        "ParentCategoryID": "1",
+        "Items": [
+          {
+            "ParentID": "6",
+            "ID": "1",
+            "Name": "Apple"
+          },
+          {
+            "ParentID": "6",
+            "ID": "2",
+            "Name": "Banana"
+          },
+          {
+            "ParentID": "6",
+            "ID": "3",
+            "Name": "Exotic Fruits"
+          },
+          {
+            "ParentID": "6",
+            "ID": "4",
+            "Name": "Fresho Organically Grown Fruits"
+          },
+          {
+            "ParentID": "6",
+            "ID": "5",
+            "Name": "Melon"
+          },
+          {
+            "ParentID": "6",
+            "ID": "6",
+            "Name": "Oranges & Sweet Lime"
+          },
+          {
+            "ParentID": "6",
+            "ID": "7",
+            "Name": "Other Fruits"
+          }
+        ]
+      },
+      {
+        "ID": "7",
+        "Name": "Organic F&V",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "8",
+        "Name": "Vegetables  arrow",
+        "ParentCategoryID": "1",
+        "Items": [
+          {
+            "ParentID": "8",
+            "ID": "8",
+            "Name": "Beans"
+          },
+          {
+            "ParentID": "8",
+            "ID": "9",
+            "Name": "Brinjals"
+          },
+          {
+            "ParentID": "8",
+            "ID": "10",
+            "Name": "Chilli, Lemon, Garlic & Ginger"
+          },
+          {
+            "ParentID": "8",
+            "ID": "11",
+            "Name": "Exotic Vegetables"
+          },
+          {
+            "ParentID": "8",
+            "ID": "12",
+            "Name": "Fresho Organically Grown Vegies"
+          },
+          {
+            "ParentID": "8",
+            "ID": "13",
+            "Name": "Gourd & Cucumber"
+          },
+          {
+            "ParentID": "8",
+            "ID": "14",
+            "Name": "Leafy Vegetables"
+          },
+          {
+            "ParentID": "8",
+            "ID": "15",
+            "Name": "Other Vegetables"
+          },
+          {
+            "ParentID": "8",
+            "ID": "16",
+            "Name": "Potato, Onion & Tomato"
+          },
+          {
+            "ParentID": "8",
+            "ID": "17",
+            "Name": "Root Vegetables"
+          }
+        ]
+      },
+      {
+        "ID": "9",
+        "Name": "Popular Brands",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "10",
+        "Name": "Fresho",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "11",
+        "Name": "Zespri",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "12",
+        "Name": "Tvs Organics",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "13",
+        "Name": "Gopalan Organic",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "14",
+        "Name": "Hampi",
+        "ParentCategoryID": "1"
+      },
+      {
+        "ID": "15",
+        "Name": "Hampi Organic",
+        "ParentCategoryID": "1"
+      }
+    ]
+  },
+  {
+    "ID": "2",
+    "Name": "Grocery & Staples",
+    "SubCategory": [
+      {
+        "ID": "16",
+        "Name": "Ayurvedic",
+        "ParentCategoryID": "2"
+      },
+      {
+        "ID": "17",
+        "Name": "Dals & Pulses  arrow",
+        "ParentCategoryID": "2"
+      },
+      {
+        "ID": "18",
+        "Name": "Dals & Pulses",
+        "ParentCategoryID": "2",
+        "Items": [
+          {
+            "ParentID": "18",
+            "ID": "18",
+            "Name": "Channa Dal"
+          },
+          {
+            "ParentID": "18",
+            "ID": "19",
+            "Name": "Moong Dal"
+          },
+          {
+            "ParentID": "18",
+            "ID": "20",
+            "Name": "Other Dals"
+          },
+          {
+            "ParentID": "18",
+            "ID": "21",
+            "Name": "Raw Peanuts"
+          },
+          {
+            "ParentID": "18",
+            "ID": "22",
+            "Name": "Soya Products"
+          },
+          {
+            "ParentID": "18",
+            "ID": "23",
+            "Name": "Toor Dal"
+          },
+          {
+            "ParentID": "18",
+            "ID": "24",
+            "Name": "Urad Dal"
+          }
+        ]
+      },
+      {
+        "ID": "19",
+        "Name": "Dry Fruits  arrow",
+        "ParentCategoryID": "2",
+        "Items": [
+          {
+            "ParentID": "19",
+            "ID": "25",
+            "Name": "Almonds"
+          },
+          {
+            "ParentID": "19",
+            "ID": "26",
+            "Name": "Cashews"
+          },
+          {
+            "ParentID": "19",
+            "ID": "27",
+            "Name": "Festive Gift Pack"
+          },
+          {
+            "ParentID": "19",
+            "ID": "28",
+            "Name": "Mukhwas & Mouth Freshener"
+          },
+          {
+            "ParentID": "19",
+            "ID": "29",
+            "Name": "Other Dry Fruits"
+          },
+          {
+            "ID": "30",
+            "Name": "Raisins",
+            "ParentID": "19"
+          }
+        ]
+      },
+      {
+        "ID": "20",
+        "Name": "Edible Oils & Ghee  arrow",
+        "ParentCategoryID": "2",
+        "Items": [
+          {
+            "ParentID": "20",
+            "ID": "31",
+            "Name": ""
+          },
+          {
+            "ParentID": "20",
+            "ID": "32",
+            "Name": "Coconut Oil"
+          },
+          {
+            "ParentID": "20",
+            "ID": "33",
+            "Name": "Ghee"
+          },
+          {
+            "ParentID": "20",
+            "ID": "34",
+            "Name": "Gingelly Oil"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "ID": "3",
+    "Name": "Bread Dairy & Eggs"
+  }
+]
