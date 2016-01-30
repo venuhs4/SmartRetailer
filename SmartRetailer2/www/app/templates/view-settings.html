@@ -7,6 +7,13 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        <div class="list">
+            <a class="item item-icon-left" ng-click="resetData()">
+                <i class="icon ion-android-refresh"></i>
+                Reset all data
+            </a>
+        </div>
+
         <div>
             <ul class="list">
 

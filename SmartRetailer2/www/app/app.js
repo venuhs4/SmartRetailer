@@ -19,15 +19,15 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            $urlRouterProvider.otherwise("/app/products");
+            $urlRouterProvider.otherwise("/login");
 
             //if (idUserLogedIn == null) {
             //    console.warn("user not loged in");
-            //    $urlRouterProvider.otherwise("/products");
+            //    $urlRouterProvider.otherwise("/login");
             //}
             //else if (isDefaultRetailerSet == null) {
             //    console.warn("default retailer not set");
-            //    $urlRouterProvider.otherwise("/products");
+            //    $urlRouterProvider.otherwise("/retailers");
             //}
             //else {
             //    console.info('everything set');
@@ -47,6 +47,7 @@
             })
             .state("register", {
                 url: "/register",
+                params: {retailerID: ''},
                 templateUrl: "app/templates/view-register.html",
                 controller: "registerCtrl"
             })
@@ -112,11 +113,22 @@
                 templateUrl: "app/templates/view-contactus.html",
                 controller: "contactUsCtrl"
             })
-                .state("app.addToCart", {
-                url: "/addToCart",
-                templateUrl: "app/templates/view-addtocart.html",
-                controller: "addToCartCtrl"
-            });
+            .state("app.addToCart", {
+            url: "/addToCart",
+            templateUrl: "app/templates/view-addtocart.html",
+            controller: "addToCartCtrl"
+            })
+            .state("app.bannerdetails", {
+            url: "/bannerdetails",
+            templateUrl: "app/templates/view-banner-detail.html",
+            controller: "bannerDetailsCtrl",
+            params: {
+                bannerID: 'default',
+            },
+            })
+
+
+            ;
         });
 
 

@@ -13,7 +13,7 @@
         document.addEventListener('resume', onResume.bind(this), false);
         // Should be called once the notification is clicked
         // **important** Doesn't work with iOS while app is closed
-        
+        PushbotsPlugin.initializeAndroid('55347ccb17795958748b457c', '145091056519');
         
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
     };

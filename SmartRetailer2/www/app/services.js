@@ -30,6 +30,10 @@
             getObject: function (key) {
                 return JSON.parse($window.localStorage[key] || '{}');
             },
+            getObjectorDefault:function(key,defaultValue)
+            {
+                return JSON.parse($window.localStorage[key] || defaultValue);
+            }
         };
 
         return $customlocalstorage;

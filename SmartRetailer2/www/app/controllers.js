@@ -188,8 +188,9 @@
         }
     }])
 
-    .controller("registerCtrl", ["$scope", "$state", "$http", "$popupService", function ($scope, $state, $http, $popupService) {
+    .controller("registerCtrl", ["$scope", "$state", "$http", "$popupService", "$stateParams", function ($scope, $state, $http, $popupService, $stateParams) {
         $scope.iderrormessage = '';
+        $scope.retailerID = $stateParams.retailerID;
         $scope.user = {
             id: '',
             deviceID: ''
@@ -212,16 +213,20 @@
             if ($scope.form.phone === undefined || !$scope.form.phone.match(/^(\+\d{1,3})?-?\d{10}$/)) {
                 popupContent = popupContent.concat("<li>Enter correct phone number</li>");
             }
-            if ($scope.form.password === undefined || $scope.form.password.length<5) {
+            if ($scope.form.password === undefined || $scope.form.password.length < 5) {
                 popupContent = popupContent.concat("<li>Enter the correct password</li>");
             }
-            if ($scope.form.againpassword === $scope.form.password) {
+            if ($scope.form.againpassword !== $scope.form.password) {
                 popupContent = popupContent.concat("<li>Passwords do not match</li>");
             }
 
             if (popupContent !== '') {
                 $popupService.showAlert('Validation Error<i class="icon item-icon-left"></i>', popupContent);
             }
+            else {
+                return true;
+            }
+
             return false;
         }
         $scope.register = function (form) {
@@ -259,6 +264,7 @@
                         $customlocalstorage.set('idUserLogedIn', 'YES');
                         //console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
                         console.log(res.data);
+                        $state.go("retailers");
                     }
                     console.info("registration post success");
                 }, function () {
@@ -289,63 +295,47 @@
         }
     }])
 
-    .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
-        $scope.iderrormessage = '';
-        $scope.user = {
-            emailOrPhone: '',
-            uuid: ''
-        };
-
-
-        console.log("loginCtrl");
-        $scope.login = function () {
-            var loginSuccess = false;
-            $scope.user.uuid = device.uuid;
-            var req = {
-                method: 'POST',
-                url: 'http://192.168.1.35:8080/login/add',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify($scope.user)
-            }
-
-            $http(req).then(function (res) {
+    .controller("loginCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $popupService, $stringResource) {
+        $scope.data = {};
+        $scope.proceed = function () {
+            console.log("proceed start");
+            $http.post('http://192.168.1.45:8080/user/login', {
+                mobileNo: $scope.data.phone,
+                uuid: device.uuid
+            }).then(function (res) {
                 console.log(res.data);
-                if (res.data.registrationStatus == 'OK') {
-                    loginSuccess = true;
-                    $customlocalstorage.setObject('registration', $scope.user.id)
-                    $customlocalstorage.set('idUserLogedIn', 'YES');
-                    console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+                if (res.data.status === "1") {
+                    $customlocalstorage.setObject('defaultRetailer', res.data.retailer);
+                    $popupService.showAlert('Success', 'Login success! The retailer <b>' + res.data.retailer.storename + '</b> has been set as default.')
+                        .then(function () {
+                            $state.go('app.products');
+                        });
                 }
-                console.info("registration post success");
-            }, function () {
-                console.warn("registration post failed");
+                else if (res.data.status === "0") {
+                    //$popupService.showAlert(res.data.message, $stringResource.getValue('invalid-user'));
+                    $http.get('http://192.168.1.45:8080/invitation/' + $scope.data.phone).then(function (res) {
+                        console.log(res.data);
+                        if (res.data.status === "1") {
+                            $popupService.showAlert('Invitation', 'You have got an INVITATION from the retailer <b>' + res.data.invitation.retailer.storename + '</b>. The retailer will be set as a Default retailer.');
+                            $customlocalstorage.setObject('defaultRetailer', res.data.invitation.retailer);
+                            $state.go('register', { retailerID: res.data.invitation.retailer.id });
+                        }
+                        else {
+                            $state.go('retailers');
+                        }
+                    });
+                }
+                else {
+                    $popupService.showAlert('Oops!', 'Some thing went wrong! ' + JSON.stringify(res.data.message));
+                }
+            }, function (err) {
+                $popupService.showAlert('Error', err);
             });
-
-            if (loginSuccess) {
-                $state.go('home');
-            }
-        };
-        $scope.validateID = function () {
-            console.log($scope.user.id);
-            if ($scope.user.id != null) {
-                $scope.iderrormessage = ''
-                console.log('not show');
-                return false;
-            }
-            else {
-                $scope.iderrormessage = 'not a valid input';
-                console.info('show');
-                return true;
-            }
-        }
-        $scope.gotoRegistration = function () {
-            $state.go('register');
+            console.log("proceed complete");
         };
     }])
 
-    .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("homeCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$stateParams", function ($scope, $state, $customlocalstorage, $http, $stateParams) {
         $scope.data = { searchkey: '' };
         $scope.data.choice = '';
         $scope.retailers = null;
@@ -400,6 +390,11 @@
         }
     }])
 
+    .controller('bannerDetailsCtrl', ["$scope", "$stateParams", "$state", function ($scope, $stateParams, $state) {
+        $scope.id = $stateParams.bannerID;
+        // console.log($stateParams.bannerID);
+    }])
+
     .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', function ($scope, $state, $customlocalstorage, $http, $rootScope) {
         $scope.data = { searchkey: '' };
         $scope.data.choice = '';
@@ -448,10 +443,12 @@
 
             angular.forEach($scope.retailers, function (value, index) {
                 if (value.id == $scope.data.choice) {
+
+
                     $customlocalstorage.setObject("defaultRetailer", value);
                     console.log("default reatiler set");
                     console.log(value);
-                    $state.go('app.products');
+                    $state.go('register', { retailerID: value.id });
                 }
             });
             $rootScope.$emit("CallSetFooterRetailer", {});
@@ -476,6 +473,10 @@
         //    $scope.products = res;
         //     console.log(res)
         //});
+        $scope.showBannerDetails = function (id) {
+            $state.go('app.bannerdetails', { bannerID: id });
+            console.log(id);
+        };
         $scope.showPopup = function () {
             var ret = $popupService.showConfirm("Title", "Templete", $scope.popupData);
             ret.then(function (e) {
@@ -740,7 +741,7 @@
         };
         $scope.plusQty = function (id) {
             console.log(cartList);
-            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var cartList = $customlocalstorage.getObjectorDefault('cartlist', '[]');
             var found = false;
             angular.forEach(cartList, function (value, index) {
                 if (value.productId === id) {
@@ -787,7 +788,7 @@
                     var cartList = $customlocalstorage.getObject('cartlist', '[]');
                     var orderData = {
                         orderDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
-                        customerId: "19",
+                        customerId: "11",
                         status: 1,
                         orderRequiredDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
                         orderItems: []
@@ -860,7 +861,7 @@
             console.log($scope.parentObj.cartCount)
             $customlocalstorage.setObject('cartlist', cartList);
             console.log(cartList);
-
+            $scope.updateCartList();
         };
         $scope.plusQty = function (id) {
             console.log(cartList);
@@ -882,6 +883,7 @@
             console.log($scope.parentObj.cartCount)
             $customlocalstorage.setObject('cartlist', cartList);
             console.log(cartList);
+            $scope.updateCartList();
         };
         $scope.returnNumber = function (itemid) {
             var cartList = $customlocalstorage.getObject('cartlist', '[]');
@@ -905,8 +907,19 @@
         console.log('ordersCtrl');
     }])
 
-    .controller("settingsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("settingsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$popupService", function ($scope, $state, $customlocalstorage, $http, $popupService) {
         console.log('settingsCtrl');
+        $scope.resetData = function () {
+            $scope.data = {
+                confirm: false
+            }
+            $popupService.showConfirm("Reset Confirm", "Are you sure, You want to reset the Smart Retailer data!", $scope.data).then(function () {
+                if ($scope.data.confirm) {
+                    localStorage.clear();
+                    $popupService.showAlert("Reset Done!", "All the app related data has beed removed. Including logged in details.");
+                }
+            });
+        }
     }])
 
     .controller("feedbackCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
