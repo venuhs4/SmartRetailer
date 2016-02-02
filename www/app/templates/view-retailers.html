@@ -10,12 +10,19 @@
             <i class="icon ion-ios7-search placeholder-icon"></i>
             <input type="search" placeholder="Pin Code/Area/Retailer name" ng-model="data.searchkey" ng-change="searchSuggestion()"  autocorrect="off">
         </label>
-        <button class="button button-clear" ng-click="search()">Search</button>
+        <button class="button button-clear">Search</button>
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="card list" ng-hide="retailers == null">
-            <ion-radio ng-model="data.choice" value="{{ret.id}}" ng-repeat="ret in retailers">
+        <div class="list" ng-show="data.isSuggestionShown">
+            <div class="item" ng-repeat="sug in data.suggestions" >
+                <div ng-repeat="(h,v) in sug" ng-click="search(h,v)">
+                    {{v}}
+                </div>
+            </div>
+        </div>
+        <div class="card list" ng-show="data.isSearchResultShown">
+            <ion-radio ng-model="data.choice" value="{{ret.id}}" ng-repeat="ret in data.retailers">
                 <div class="row">
                     <div class="col col-75">
                         <h2 style="color:mediumvioletred"><strong>{{ret.storename | uppercase}}</strong></h2>

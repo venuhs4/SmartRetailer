@@ -426,42 +426,55 @@
         // console.log($stateParams.bannerID);
     }])
 
-    .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', function ($scope, $state, $customlocalstorage, $http, $rootScope) {
-        $scope.data = { searchkey: '' };
+    .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', '$config', function ($scope, $state, $customlocalstorage, $http, $rootScope, $config) {
+        $scope.data = {
+            searchkey: '',
+            suggestions: [],
+            isSuggestionShown: false,
+            isSearchResultShown: false,
+            retailers: []
+        };
         $scope.data.choice = '';
-        $scope.retailers = [];
 
         $scope.refresh = function () {
             //refresh binding
             $scope.$broadcast("scroll.refreshComplete");
         };
-        $scope.search = function () {
-            $scope.retailers = [];
-            var searchString = $scope.data.searchkey.toLowerCase();
-            var x = +searchString;
-            //search by zip code
-            if (x.toString() === searchString) {
-                $http.get("http://192.168.1.55:8080/retailer/storelike/" + searchString).then(function (res) {
-                    $scope.retailers = res.data;
-                    console.log($scope.retailers);
-                }, function (err) {
-                    console.log("erroe while fecthing the retailser by storename");
-                    console.log(err);
-                });
+        $scope.search = function (header, value) {
+            $scope.data.isSearchResultShown = true;
+            $scope.data.isSuggestionShown = false;
+            var url = '';
+            if (header === 'StoreName') {
+                url = 'http://' + $config.IP_PORT + '/retailer/storename/' + value;
+            } else if (header === 'Area') {
+                url = 'http://' + $config.IP_PORT + '/retailer/area/' + value;
+            } else if (header === 'Pincode') {
+                url = 'http://' + $config.IP_PORT + '/retailer/pincode/' + value;
             }
-                //search by store name + area
-            else {
-                $http.get("http://192.168.1.55:8080/retailer/storelike/" + searchString).then(function (res) {
-                    $scope.retailers = res.data;
-                    console.log($scope.retailers);
-                }, function (err) {
-                    console.log("erroe while fecthing the retailser by storename");
-                    console.log(err);
-                });
-            }
+
+            $http.get(url)
+               .then(function (res) {
+                   $scope.data.retailers = res.data;
+               }, function () { });
 
         };
         $scope.searchSuggestion = function () {
+            $scope.data.isSuggestionShown = true;
+            $scope.data.isSearchResultShown = false;
+
+            if ($scope.data.searchkey === '') {
+                $scope.data.suggestions = [];
+                return;
+            }
+
+            $http.get('http://' + $config.IP_PORT + '/retailer/suggestion/1/' + $scope.data.searchkey)
+                .then(function (res) {
+                    $scope.data.suggestions = res.data;
+                    console.log(res.data);
+                }, function (err) {
+                    console.log(err);
+                });
+
             console.log("suggestion called");
 
         };
@@ -471,8 +484,7 @@
         };
         $scope.setAsDefaultRetailer = function () {
             console.log($customlocalstorage.getObject("defaultRetailer"));
-
-            angular.forEach($scope.retailers, function (value, index) {
+            angular.forEach($scope.data.retailers, function (value, index) {
                 if (value.id == $scope.data.choice) {
 
 
@@ -937,44 +949,44 @@
     .controller("editprofileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
         console.log('editprofileCtrl called');
         $scope.paymentoption = [];
-       
+
         //var addPreference = function () {
         //    var paymentoption = {
         //        "Credit Card": "null",
         //    "Debit Card":"null"};
-                
-         var req=$http({
-                method: "GET",
-                url: "..//data//preferences.json",
-         }).then(function (res) { 
-             $scope.paymentoption = res.data;
-             console.log(res.data[0]);
+
+        var req = $http({
+            method: "GET",
+            url: "..//data//preferences.json",
+        }).then(function (res) {
+            $scope.paymentoption = res.data;
+            console.log(res.data[0]);
             JSON.stringify(res.data[0]);
-                console.log(res.data[0].paymentoptions);
-                console.log(res.data[1].deliverytime);
+            console.log(res.data[0].paymentoptions);
+            console.log(res.data[1].deliverytime);
 
-                //angular.forEach(res.data, function (item) {
-                //    if (item.$scope.paymentoption === "paymentoption") {
+            //angular.forEach(res.data, function (item) {
+            //    if (item.$scope.paymentoption === "paymentoption") {
 
-           
-                console.log("payment selection success1");
-            }, function () {
-                console.log("category request failed");
-            });
 
-           
-            $scope.toggleGroup = function (group) {
-                if ($scope.isGroupShown(group)) {
-                    $scope.shownGroup = null;
-                } else {
-                    $scope.shownGroup = group;
-                }
-            };
-            $scope.isGroupShown = function (group) {
-                return $scope.shownGroup === group;
-            };
+            console.log("payment selection success1");
+        }, function () {
+            console.log("category request failed");
+        });
 
-        
+
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
+        };
+
+
 
 
         //$scope.myImage = '';
@@ -1022,7 +1034,7 @@
             console.log("thanks for feedback");
         };
         var showToast = function () {
-          
+
             ionicToast.show('Thanks for Your feedback!', 'middle', false, 500);
         };
         $scope.hideToast = function () {
@@ -1071,6 +1083,4 @@
             $scope.$apply();
         });
     }]);
-
-
 })();

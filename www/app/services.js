@@ -30,8 +30,7 @@
             getObject: function (key) {
                 return JSON.parse($window.localStorage[key] || '{}');
             },
-            getObjectorDefault:function(key,defaultValue)
-            {
+            getObjectorDefault: function (key, defaultValue) {
                 return JSON.parse($window.localStorage[key] || defaultValue);
             }
         };
@@ -138,5 +137,10 @@
                 return finValue;
             }
         }
-    }]);
+    }])
+    .factory('$config', function () {
+        return {
+            IP_PORT: "192.168.1.55:8080"
+        }
+    });
 })();

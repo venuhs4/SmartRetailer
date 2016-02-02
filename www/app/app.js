@@ -19,20 +19,20 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            //$urlRouterProvider.otherwise("/app/products");
+            $urlRouterProvider.otherwise("/retailers");
 
-            if (idUserLogedIn == null) {
-                console.warn("user not loged in");
-                $urlRouterProvider.otherwise("/login");
-            }
-            else if (isDefaultRetailerSet == null) {
-                console.warn("default retailer not set");
-                $urlRouterProvider.otherwise("/retailers");
-            }
-            else {
-                console.info('everything set');
-                $urlRouterProvider.otherwise("/products");
-            }
+            //if (idUserLogedIn == null) {
+            //    console.warn("user not loged in");
+            //    $urlRouterProvider.otherwise("/login");
+            //}
+            //else if (isDefaultRetailerSet == null) {
+            //    console.warn("default retailer not set");
+            //    $urlRouterProvider.otherwise("/retailers");
+            //}
+            //else {
+            //    console.info('everything set');
+            //    $urlRouterProvider.otherwise("/products");
+            //}
             $stateProvider
             .state("app", {
                 url: "/app",
