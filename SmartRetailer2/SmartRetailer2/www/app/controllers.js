@@ -40,7 +40,7 @@
 
         $http({
             method: "GET",
-            url: "http://192.168.1.35:8080/category",
+            url: "http://192.168.1.55:8080/category",
         }).then(function (res) {
             $scope.category = res.data;
             console.log("category success1");
@@ -50,7 +50,7 @@
         $scope.getProducts = function (id1, id2, id3) {
             $http({
                 method: "GET",
-                url: "http://192.168.1.35:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
+                url: "http://192.168.1.55:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
             }).success(function (res) {
                 console.log("success");
                 $scope.parentProducts.products = res;
@@ -62,7 +62,7 @@
             if ($scope.shownGroup === cat && cat.segments === undefined) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.35:8080/category/segment/" + cat.id,
+                    url: "http://192.168.1.55:8080/category/segment/" + cat.id,
                 }).then(function (res) {
                     cat.segments = res.data;
                 });
@@ -72,7 +72,7 @@
             if ($scope.shownSeg === seg && seg.subSegments === undefined) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.35:8080/category/segment/subsegment/" + seg.id,
+                    url: "http://192.168.1.55:8080/category/segment/subsegment/" + seg.id,
                 }).then(function (res) {
                     seg.subSegments = res.data;
                     console.log(seg.subSegments);
@@ -249,7 +249,7 @@
 
                 var req = {
                     method: 'PUT',
-                    url: 'http://192.168.1.35:8080/register/add',
+                    url: 'http://192.168.1.55:8080/register/add',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -410,7 +410,7 @@
             var x = +searchString;
             //search by zip code
             if (x.toString() === searchString) {
-                $http.get("http://192.168.1.35:8080/retailer/storelike/" + searchString).then(function (res) {
+                $http.get("http://192.168.1.55:8080/retailer/storelike/" + searchString).then(function (res) {
                     $scope.retailers = res.data;
                     console.log($scope.retailers);
                 }, function (err) {
@@ -420,7 +420,7 @@
             }
                 //search by store name + area
             else {
-                $http.get("http://192.168.1.35:8080/retailer/storelike/" + searchString).then(function (res) {
+                $http.get("http://192.168.1.55:8080/retailer/storelike/" + searchString).then(function (res) {
                     $scope.retailers = res.data;
                     console.log($scope.retailers);
                 }, function (err) {
@@ -469,7 +469,7 @@
         //$ionicSlideBoxDelegate.update();
         //$scope.$apply();
 
-        //var defaultRequest = $http.get('http://192.168.1.35:8080/product').success(function (res) {
+        //var defaultRequest = $http.get('http://192.168.1.55:8080/product').success(function (res) {
         //    $scope.products = res;
         //     console.log(res)
         //});
@@ -502,7 +502,7 @@
             //var req = $http.get('data/products.json').success(function (res) {
             var req = {
                 method: 'GET',
-                url: 'http://192.168.1.35:8080/product',
+                url: 'http://192.168.1.55:8080/product',
             }
             //  $scope.products = res;
             var searchString = $scope.data.searchkey.toLowerCase();
@@ -562,7 +562,7 @@
 
             var req = {
                 method: 'GET',
-                url: 'http://192.168.1.35:8080/product',
+                url: 'http://192.168.1.55:8080/product',
             }
 
             $http(req).then(function (res) {
@@ -663,7 +663,7 @@
 
         var req = {
             method: 'GET',
-            url: 'http://192.168.1.35:8080/product',
+            url: 'http://192.168.1.55:8080/product',
         }
 
         $http(req).then(function (res) {
@@ -703,7 +703,7 @@
             $scope.categoryProductShow = false;
             var productsReq = {
                 method: 'GET',
-                url: 'http://192.168.1.35:8080/product/search/' + text,
+                url: 'http://192.168.1.55:8080/product/search/' + text,
             }
 
             $http(productsReq).then(function (res) {
@@ -803,7 +803,7 @@
                     });
 
                     var orderReq = {
-                        url: "http://192.168.1.35:8080/order/placeOrder",
+                        url: "http://192.168.1.55:8080/order/placeOrder",
                         method: "POST",
                         data: JSON.stringify(orderData)
                     };
@@ -825,7 +825,7 @@
             angular.forEach(cartList, function (value, index) {
                 var req = {
                     method: 'GET',
-                    url: 'http://192.168.1.35:8080/product/' + value.productId,
+                    url: 'http://192.168.1.55:8080/product/' + value.productId,
                 }
                 console.log(req.url);
 

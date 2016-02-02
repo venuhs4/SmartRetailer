@@ -1,9 +1,0 @@
-diff a/SmartRetailer2/www/app/app.js b/SmartRetailer2/www/app/app.js	(rejected hunks)
-@@ -15,7 +15,6 @@
-             });
-         })
-         .config(function ($stateProvider, $urlRouterProvider) {
--
-             var idUserLogedIn = localStorage['idUserLogedIn'];
-             var isDefaultRetailerSet = localStorage['defaultRetailer'];
- 
