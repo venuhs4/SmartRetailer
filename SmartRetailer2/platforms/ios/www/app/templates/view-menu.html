@@ -1,0 +1,119 @@
+﻿<ion-side-menus>
+    <ion-side-menu-content>
+        <ion-nav-bar class="bar-royal">
+            <ion-nav-back-button></ion-nav-back-button>
+            <ion-nav-buttons side="left">
+                <button menu-toggle="left" class="button button-icon icon ion-navicon-round"></button>
+            </ion-nav-buttons>
+            <ion-nav-buttons side="right">
+                <button ng-click="openPopover($event)" class="button button-icon icon ion-android-more-vertical"></button>
+            </ion-nav-buttons>
+        </ion-nav-bar>
+        <ion-nav-view animation="slide-left-right"></ion-nav-view>
+    </ion-side-menu-content>
+
+    <ion-side-menu side="left">
+        <header class="bar bar-header bar-royal">
+            <h1 class="title">Menu</h1>
+        </header>
+        <ion-content class="has-header">
+
+            <ion-list>
+                <div ng-repeat="cat in category">
+                    <ion-item class="item-stable item-icon-right"
+                              ng-click="toggleGroup(cat);loadSegments(cat)"
+                              ng-class="{active:isGroupShown(cat)}">
+                        <span style="color:#111111">
+                            {{cat.name}}
+                        </span>
+                        <i class="icon" ng-class="isGroupShown(cat) ? 'ion-ios-arrow-up' : 'ion-ios-arrow-down'"></i>
+                    </ion-item>
+                    <div ng-repeat="seg in cat.segments">
+                        <ion-item class="item-accordion"
+                                  ng-click="toggleSeg(seg);loadSubSegments(seg)"
+                                  ng-show="isGroupShown(cat)"
+                                  ng-class="{active:isSegShown(seg)}">
+                            &nbsp;&nbsp;<span style="color:#555555">{{seg.segmentname}}</span>
+                        </ion-item>
+                        <ion-item menu-close class="item-accordion"
+                                  ng-repeat="subSeg in seg.subSegments"
+                                  ng-show="isSegShown(seg) && isGroupShown(cat)"
+                                  ng-click="getProducts(cat.id,seg.id,subSeg.id)" href="#/app/productsuggestion">
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#999999">{{subSeg.name}}</span>
+                        </ion-item>
+                    </div>
+                </div>
+            </ion-list>
+        </ion-content>
+        <footer class="bar bar-footer">
+            <h1 class="title">Retailer: <span style="color:blueviolet">{{retailer | uppercase}}</span></h1>
+        </footer>
+    </ion-side-menu>
+</ion-side-menus>
+
+<script id="my-popover.html" type="text/ng-template">
+    <ion-popover-view>
+        <ion-content class="contendheight">
+            <div class="list">
+                <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
+                    <i class="icon ion-person"></i>
+                    Update Profile
+                </a>
+
+
+                <a class="item item-icon-left" href="#/retailers" ng-click="closePopover()">
+                    <i class="icon ion-android-person-add"></i>
+                    Update Vendor
+                </a>
+                <a class="item item-icon-left" href="#/login" ng-click="closePopover()">
+                    <i class="icon ion-android-star"></i>
+                    Login Page
+                </a>
+
+                <a class="item item-icon-left" href="#/legal" ng-click="closePopover()">
+                    <i class="icon ion-document"></i>
+                    Legal
+                </a>
+
+                <a class="item item-icon-left" href="#/contactus" ng-click="closePopover()">
+                    <i class="icon ion-android-contact"></i>
+                    Contact Us
+                </a>
+            </div>
+        </ion-content>
+    </ion-popover-view>
+</script>
+<style type="text/css">
+    .list .item.item-accordion {
+        line-height: 38px;
+        padding-top: 0;
+        padding-bottom: 0;
+        transition: 0.2s all linear;
+        border: none;
+    }
+
+    .list .item.item-subsegment {
+        line-height: 38px;
+        border: none;
+        height: 38px;
+        padding: 2px 2px 2px 10px !important;
+    }
+
+    .list .item.item-stable {
+        border: none;
+    }
+
+    .item-complex .item-content {
+        padding: 0 0 0 40px !important;
+        border: none;
+    }
+
+    .list .item.item-accordion.ng-hide {
+        line-height: 0px;
+    }
+
+    .list .item.item-accordion.ng-hide-add,
+    .list .item.item-accordion.ng-hide-remove {
+        display: block !important;
+    }
+</style>
