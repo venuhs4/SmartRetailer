@@ -19,7 +19,7 @@
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
 
-            $popupService.showAlert("Location Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>");
+            $popupService.showAlert("Location Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>" + "<p>Token:" + localStorage['token'] + "</p>");//localStorage['token']
             console.log(posOptions);
         }, function (err) {
             $popupService.showAlert("Geo Fail", JSON.stringify(err));
