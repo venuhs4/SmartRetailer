@@ -11,7 +11,7 @@
                 if (window.StatusBar) {
                     StatusBar.styleDefault();
                 }
-             //   AppRate.promptForRating(true);
+                //   AppRate.promptForRating(true);
             });
         })
         .config(function ($stateProvider, $urlRouterProvider) {
@@ -19,35 +19,35 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            $urlRouterProvider.otherwise("/app/products");
+            //$urlRouterProvider.otherwise("/app/products");
 
-            //if (idUserLogedIn == null) {
-            //    console.warn("user not loged in");
-            //    $urlRouterProvider.otherwise("/login");
-            //}
-            //else if (isDefaultRetailerSet == null) {
-            //    console.warn("default retailer not set");
-            //    $urlRouterProvider.otherwise("/retailers");
-            //}
-            //else {
-            //    console.info('everything set');
-            //    $urlRouterProvider.otherwise("/products");
-            //}
+            if (idUserLogedIn == null) {
+                console.warn("user not loged in");
+                $urlRouterProvider.otherwise("/login");
+            }
+            else if (isDefaultRetailerSet == null) {
+                console.warn("default retailer not set");
+                $urlRouterProvider.otherwise("/retailers");
+            }
+            else {
+                console.info('everything set');
+                $urlRouterProvider.otherwise("/app/products");
+            }
             $stateProvider
             .state("app", {
                 url: "/app",
                 abstract: true,
                 templateUrl: "app/templates/view-menu.html",
                 controller: "appCtrl"
-            }).
-            state("initial", {
+            })
+            .state("initial", {
                 url: "/initial",
                 templateUrl: "app/templates/view-initial.html",
                 controller: "initialCtrl"
             })
             .state("register", {
                 url: "/register",
-                params: {retailerID: ''},
+                params: { retailerID: '' },
                 templateUrl: "app/templates/view-register.html",
                 controller: "registerCtrl"
             })
@@ -55,7 +55,8 @@
                 url: "/login",
                 templateUrl: "app/templates/view-login.html",
                 controller: "loginCtrl"
-            }).state("retailers", {
+            })
+            .state("retailers", {
                 url: "/retailers",
                 templateUrl: "app/templates/view-retailers.html",
                 controller: "retailersCtrl"
@@ -64,36 +65,44 @@
                 url: "/home",
                 templateUrl: "app/templates/view-home.html",
                 controller: "homeCtrl"
-            }).state("app.products", {
+            })
+            .state("app.products", {
                 url: "/products",
                 templateUrl: "app/templates/view-products.html",
                 controller: "productsCtrl"
-                
-            }).state("app.productdetail", {
+
+            })
+            .state("app.productdetail", {
                 url: "/productdetail",
                 templateUrl: "app/templates/view-product-detail.html",
                 controller: "productDetailCtrl"
-            }).state("app.productsuggestion", {
+            })
+            .state("app.productsuggestion", {
                 url: "/productsuggestion",
                 templateUrl: "app/templates/view-productsuggestion.html",
                 controller: "productsuggestionCtrl"
-            }).state("profile", {
+            })
+            .state("profile", {
                 url: "/profile",
                 templateUrl: "app/templates/view-profile.html",
                 controller: "profileCtrl"
-            }).state("orders", {
+            })
+            .state("orders", {
                 url: "/orders",
                 templateUrl: "app/templates/view-orders.html",
                 controller: "ordersCtrl"
-            }).state("settings", {
+            })
+            .state("settings", {
                 url: "/settings",
                 templateUrl: "app/templates/view-settings.html",
                 controller: "settingsCtrl"
-            }).state("feedback", {
+            })
+            .state("feedback", {
                 url: "/feedback",
                 templateUrl: "app/templates/view-feedback.html",
                 controller: "feedbackCtrl"
-            }).state("legal", {
+            })
+            .state("legal", {
                 url: "/legal",
                 templateUrl: "app/templates/view-legal.html",
                 controller: "legalCtrl"
@@ -114,23 +123,21 @@
                 controller: "contactUsCtrl"
             })
             .state("app.addToCart", {
-            url: "/addToCart",
-            templateUrl: "app/templates/view-addtocart.html",
-            controller: "addToCartCtrl"
+                url: "/addToCart",
+                templateUrl: "app/templates/view-addtocart.html",
+                controller: "addToCartCtrl"
             })
             .state("app.bannerdetails", {
-            url: "/bannerdetails",
-            templateUrl: "app/templates/view-banner-detail.html",
-            controller: "bannerDetailsCtrl",
-            params: {
-                bannerID: 'default',
-            },
+                url: "/bannerdetails",
+                templateUrl: "app/templates/view-banner-detail.html",
+                controller: "bannerDetailsCtrl",
+                params: {
+                    bannerID: 'default',
+                },
             })
 
 
             ;
         });
-
-
 })();
 

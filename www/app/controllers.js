@@ -27,7 +27,6 @@
             console.log(err);
         });
 
-
         $scope.parentProducts = {
             products: []
         };
@@ -36,7 +35,6 @@
             prods: ["sdfdsfsd", "dfds"],
             selectedProduct: {}
         };
-
 
         $http({
             method: "GET",
@@ -125,7 +123,7 @@
             $scope.parentObj.selectedProduct = item;
             $state.go("app.productdetail");
         };
-
+       
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -338,6 +336,7 @@
                     $customlocalstorage.setObject('defaultRetailer', res.data.retailer);
                     $popupService.showAlert('Success', 'Login success! The retailer <b>' + res.data.retailer.storename + '</b> has been set as default.')
                         .then(function () {
+                            //localStorage['idUserLogedIn'] = 'true';
                             $state.go('app.products');
                         });
                 }
@@ -722,20 +721,25 @@
             $scope.productShow = false;
             $scope.categoryProductShow = false;
 
+            $scope.searchList = [];
+            $http.get('http://192.168.1.55:8080/product/suggestion/' + $scope.data.searchkey).then(function (res) {
+                $scope.searchList = res.data;
+            });
+
             //if ($scope.data.searchkey.length <3)
             //{
             //    return;
             //}
 
-            var searchString = $scope.data.searchkey.toLowerCase();
-            console.log("KEY:" + searchString);
-            $scope.searchList = [];
-            angular.forEach($scope.productList, function (item) {
-                if ((item).toLowerCase().indexOf(searchString) !== -1) {
-                    $scope.searchList.push(item);
-                }
-            });
-            console.log($scope.searchList);
+            //var searchString = $scope.data.searchkey.toLowerCase();
+            //console.log("KEY:" + searchString);
+            
+            //angular.forEach($scope.productList, function (item) {
+            //    if ((item).toLowerCase().indexOf(searchString) !== -1) {
+            //        $scope.searchList.push(item);
+            //    }
+            //});
+            //console.log($scope.searchList);
         };
         $scope.suggestionClick = function (text) {
 
@@ -756,7 +760,7 @@
         };
         $scope.minusQty = function (id) {
             console.log(cartList);
-            var cartList = $customlocalstorage.getObject('cartlist', '[]');
+            var cartList = $customlocalstorage.getObjectorDefault('cartlist', '[]');
             var found = false;
             angular.forEach(cartList, function (value, index) {
                 if (value.productId === id) {
@@ -764,14 +768,12 @@
                     if (cartList[index].Qty <= 1) {
                         cartList.splice(index, 1);
                     }
-                    if (cartList[index].Qty != 0) {
+                    else if (cartList[index].Qty != 0) {
                         cartList[index].Qty--;
                     }
-
                     else if (cartList[index].Qty == 0) {
                         $scope.productShow = false;
                         console.log("cleared");
-
                     }
                 }
             });
@@ -817,8 +819,21 @@
     }])
 
     .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
+        $scope.displayProductDetailList = [];
+        $scope.initProductDetailList = [];
+        angular.forEach($customlocalstorage.getObjectorDefault('cartlist',[]), function (value, index) {
+            var req = {
+                method: 'GET',
+                url: 'http://192.168.1.55:8080/product/' + value.productId,
+            }
+            $http(req).then(function (res) {
+                $scope.initProductDetailList.push(res.data);
+                $scope.displayProductDetailList.push(res.data);
+            }, function () {
+                console.warn("search post failed");
+            });
+        });
 
-        $scope.productDetailList = [];
         $scope.data = {
             confirm: false
         };
@@ -861,27 +876,29 @@
             });
         };
         $scope.updateCartList = function () {
-            var cartList = $customlocalstorage.getObject('cartlist', '[]');
-            $scope.productDetailList = [];
-            angular.forEach(cartList, function (value, index) {
-                var req = {
-                    method: 'GET',
-                    url: 'http://192.168.1.55:8080/product/' + value.productId,
+            var cartList = $customlocalstorage.getObjectorDefault('cartlist', []);
+            $scope.displayProductDetailList = [];
+            angular.forEach($scope.initProductDetailList, function (value, index) {
+                if ($scope.returnNumber(value.id) !== 0)
+                {
+                    $scope.displayProductDetailList.push(value);
                 }
-                console.log(req.url);
-
-                $http(req).then(function (res) {
-                    $scope.productDetailList.push(res.data);
-                }, function () {
-                    console.warn("search post failed");
-                });
             });
-            console.log($scope.productDetailList);
-            $scope.productCount = $scope.productDetailList;
-            console.log($scope.productDetailList.length);
-
+            console.log($scope.displayProductDetailList);
+            //$scope.productCount = $scope.productDetailList;
+            //console.log($scope.productDetailList.length);
         }
-        $scope.updateCartList();
+
+        $scope.returnNumber = function (itemid) {
+            var cartList = $customlocalstorage.getObjectorDefault('cartlist', '[]');
+            var qty = 0;
+            angular.forEach(cartList, function (value, index) {
+                if (value.productId == itemid) {
+                    qty = value.Qty;
+                }
+            });
+            return qty;
+        };
         $scope.minusQty = function (id) {
             console.log(cartList);
             var cartList = $customlocalstorage.getObject('cartlist', '[]');
@@ -891,7 +908,6 @@
                     found = true;
                     if (cartList[index].Qty <= 1) {
                         cartList.splice(index, 1);
-                        $scope.updateCartList();
                     }
                     else if (cartList[index].Qty != 0) {
                         cartList[index].Qty--;
@@ -899,9 +915,7 @@
                 }
             });
             $scope.parentObj.cartCount = cartList.length;
-            console.log($scope.parentObj.cartCount)
             $customlocalstorage.setObject('cartlist', cartList);
-            console.log(cartList);
             $scope.updateCartList();
         };
         $scope.plusQty = function (id) {
@@ -921,23 +935,9 @@
                 });
             }
             $scope.parentObj.cartCount = cartList.length;
-            console.log($scope.parentObj.cartCount)
             $customlocalstorage.setObject('cartlist', cartList);
-            console.log(cartList);
             $scope.updateCartList();
         };
-        $scope.returnNumber = function (itemid) {
-            var cartList = $customlocalstorage.getObject('cartlist', '[]');
-            var qty = 0;
-            angular.forEach(cartList, function (value, index) {
-                if (value.productId == itemid) {
-                    qty = value.Qty;
-                }
-
-            });
-            return qty;
-        };
-        console.log('addToCart');
     }])
 
     .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
