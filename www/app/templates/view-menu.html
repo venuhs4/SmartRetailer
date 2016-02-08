@@ -38,7 +38,7 @@
                         <ion-item menu-close class="item-accordion"
                                   ng-repeat="subSeg in seg.subSegments"
                                   ng-show="isSegShown(seg) && isGroupShown(cat)"
-                                  ng-click="getProducts(cat.id,seg.id,subSeg.id)" href="#/app/productsuggestion">
+                                  ng-click="getProducts(cat.id,seg.id,subSeg.id,subSeg.name)" href="#/app/productsuggestion">
                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#999999">{{subSeg.name}}</span>
                         </ion-item>
                     </div>

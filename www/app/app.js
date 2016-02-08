@@ -19,7 +19,7 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            //$urlRouterProvider.otherwise("/app/products");
+           // $urlRouterProvider.otherwise("/app/products");
 
             if (idUserLogedIn == null) {
                 console.warn("user not loged in");

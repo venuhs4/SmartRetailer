@@ -6,6 +6,11 @@
     .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", "ionicToast", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService, ionicToast) {
         $scope.retailer = "";
         $scope.category = [];
+        $scope.categorySelection = {
+            category: '',
+            segment: '',
+            subSegment:''
+        }
         $scope.shownSeg = null;
         console.log($scope.sampleData);
 
@@ -38,17 +43,19 @@
 
         $http({
             method: "GET",
-            url: "http://192.168.1.55:8080/category",
+            url: "http://192.168.1.40:8080/category",
         }).then(function (res) {
             $scope.category = res.data;
             console.log("category success1");
         }, function () {
             console.log("category request failed");
         });
-        $scope.getProducts = function (id1, id2, id3) {
+        $scope.getProducts = function (id1, id2, id3, subSegName) {
+            $scope.categorySelection.subSegment = subSegName;
+            console.log($scope.categorySelection);
             $http({
                 method: "GET",
-                url: "http://192.168.1.55:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
+                url: "http://192.168.1.40:8080/product/category/" + id1 + "/segment/" + id2 + "/subsegment/" + id3,
             }).success(function (res) {
                 console.log("success");
                 $scope.parentProducts.products = res;
@@ -57,20 +64,22 @@
             });
         }
         $scope.loadSegments = function (cat) {
+            $scope.categorySelection.category = cat.name;
             if ($scope.shownGroup === cat && cat.segments === undefined) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.55:8080/category/segment/" + cat.id,
+                    url: "http://192.168.1.40:8080/category/segment/" + cat.id,
                 }).then(function (res) {
                     cat.segments = res.data;
                 });
             }
         };
         $scope.loadSubSegments = function (seg) {
+            $scope.categorySelection.segment = seg.segmentname;
             if ($scope.shownSeg === seg && seg.subSegments === undefined) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.55:8080/category/segment/subsegment/" + seg.id,
+                    url: "http://192.168.1.40:8080/category/segment/subsegment/" + seg.id,
                 }).then(function (res) {
                     seg.subSegments = res.data;
                     console.log(seg.subSegments);
@@ -278,7 +287,7 @@
 
                 var req = {
                     method: 'PUT',
-                    url: 'http://192.168.1.55:8080/register/add',
+                    url: 'http://192.168.1.40:8080/register/add',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -336,7 +345,7 @@
                     $customlocalstorage.setObject('defaultRetailer', res.data.retailer);
                     $popupService.showAlert('Success', 'Login success! The retailer <b>' + res.data.retailer.storename + '</b> has been set as default.')
                         .then(function () {
-                            //localStorage['idUserLogedIn'] = 'true';
+                            localStorage['idUserLogedIn'] = 'true';
                             $state.go('app.products');
                         });
                 }
@@ -509,7 +518,7 @@
         //$ionicSlideBoxDelegate.update();
         //$scope.$apply();
 
-        //var defaultRequest = $http.get('http://192.168.1.55:8080/product').success(function (res) {
+        //var defaultRequest = $http.get('http://192.168.1.40:8080/product').success(function (res) {
         //    $scope.products = res;
         //     console.log(res)
         //});
@@ -542,7 +551,7 @@
             //var req = $http.get('data/products.json').success(function (res) {
             var req = {
                 method: 'GET',
-                url: 'http://192.168.1.55:8080/product',
+                url: 'http://192.168.1.40:8080/product',
             }
             //  $scope.products = res;
             var searchString = $scope.data.searchkey.toLowerCase();
@@ -602,7 +611,7 @@
 
             var req = {
                 method: 'GET',
-                url: 'http://192.168.1.55:8080/product',
+                url: 'http://192.168.1.40:8080/product',
             }
 
             $http(req).then(function (res) {
@@ -703,7 +712,7 @@
 
         var req = {
             method: 'GET',
-            url: 'http://192.168.1.55:8080/product',
+            url: 'http://192.168.1.40:8080/product',
         }
 
         $http(req).then(function (res) {
@@ -722,7 +731,7 @@
             $scope.categoryProductShow = false;
 
             $scope.searchList = [];
-            $http.get('http://192.168.1.55:8080/product/suggestion/' + $scope.data.searchkey).then(function (res) {
+            $http.get('http://192.168.1.40:8080/product/suggestion/' + $scope.data.searchkey).then(function (res) {
                 $scope.searchList = res.data;
             });
 
@@ -748,7 +757,7 @@
             $scope.categoryProductShow = false;
             var productsReq = {
                 method: 'GET',
-                url: 'http://192.168.1.55:8080/product/search/' + text,
+                url: 'http://192.168.1.40:8080/product/search/' + text,
             }
 
             $http(productsReq).then(function (res) {
@@ -821,10 +830,10 @@
     .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
         $scope.displayProductDetailList = [];
         $scope.initProductDetailList = [];
-        angular.forEach($customlocalstorage.getObjectorDefault('cartlist',[]), function (value, index) {
+        angular.forEach($customlocalstorage.getObjectorDefault('cartlist','[]'), function (value, index) {
             var req = {
                 method: 'GET',
-                url: 'http://192.168.1.55:8080/product/' + value.productId,
+                url: 'http://192.168.1.40:8080/product/' + value.productId,
             }
             $http(req).then(function (res) {
                 $scope.initProductDetailList.push(res.data);
@@ -845,7 +854,7 @@
                     var orderData = {
                         orderDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
                         customerId: "11",
-                        status: 1,
+                        status: 0,
                         orderRequiredDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
                         orderItems: []
                     };
@@ -859,7 +868,7 @@
                     });
 
                     var orderReq = {
-                        url: "http://192.168.1.55:8080/order/placeOrder",
+                        url: "http://192.168.1.40:8080/order/placeOrder",
                         method: "POST",
                         data: JSON.stringify(orderData)
                     };
@@ -941,6 +950,8 @@
     }])
 
     .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+
+        //$http.
         console.log('profileCtrl');
     }])
 
