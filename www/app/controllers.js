@@ -9,7 +9,7 @@
         $scope.categorySelection = {
             category: '',
             segment: '',
-            subSegment:''
+            subSegment: ''
         }
         $scope.shownSeg = null;
         console.log($scope.sampleData);
@@ -24,7 +24,7 @@
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
 
-            $popupService.showAlert("Location Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>" + "<p>Token:" + localStorage['token'] + "</p>");//localStorage['token']
+            //$popupService.showAlert("Location Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>" + "<p>Token:" + localStorage['token'] + "</p>");//localStorage['token']
             console.log(posOptions);
         }, function (err) {
             $popupService.showAlert("Geo Fail", JSON.stringify(err));
@@ -132,7 +132,7 @@
             $scope.parentObj.selectedProduct = item;
             $state.go("app.productdetail");
         };
-       
+
         $scope.setRetailerFooter = function () {
             var retailer = $customlocalstorage.getObject('defaultRetailer');
             console.log("called parent");
@@ -685,7 +685,9 @@
             console.log("refresh");
             $scope.$broadcast("scroll.refreshComplete");
         };
-
+        $scope.gotoWishlist = function () {
+            $state.go('app.wishlist');
+        };
         //$scope.setAsDefaultRetailer = function () {
         //    console.log($customlocalstorage.getObject("defaultRetailer"));
 
@@ -699,7 +701,7 @@
         //}
     }])
 
-    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http","ionicToast", function ($scope, $state, $customlocalstorage, $http, ionicToast) {
         console.log('productsuggestionCtrl');
         $scope.data = { searchkey: '' };
         $scope.productList = [];
@@ -709,6 +711,7 @@
         $scope.productShow = false;
         $scope.categoryProductShow = true;
         $scope.productCount = 0;
+        $scope.recentSearch = $customlocalstorage.getObjectorDefault('recentSearch', '[]');
 
         var req = {
             method: 'GET',
@@ -729,7 +732,7 @@
             $scope.suggestionShow = true;
             $scope.productShow = false;
             $scope.categoryProductShow = false;
-
+            var productToCache = [];
             $scope.searchList = [];
             $http.get('http://192.168.1.40:8080/product/suggestion/' + $scope.data.searchkey).then(function (res) {
                 $scope.searchList = res.data;
@@ -742,7 +745,7 @@
 
             //var searchString = $scope.data.searchkey.toLowerCase();
             //console.log("KEY:" + searchString);
-            
+
             //angular.forEach($scope.productList, function (item) {
             //    if ((item).toLowerCase().indexOf(searchString) !== -1) {
             //        $scope.searchList.push(item);
@@ -755,6 +758,8 @@
             $scope.suggestionShow = false;
             $scope.productShow = true;
             $scope.categoryProductShow = false;
+            $scope.productCache = [];
+
             var productsReq = {
                 method: 'GET',
                 url: 'http://192.168.1.40:8080/product/search/' + text,
@@ -762,7 +767,20 @@
 
             $http(productsReq).then(function (res) {
                 $scope.productDetailList = res.data;
-                console.log("initial list");
+                $scope.productCache = $customlocalstorage.getObjectorDefault('recentSearch', '[]');
+                var foundFlag = false;
+                angular.forEach($scope.productCache, function (value, index) {
+                    if (value.key === text) {
+                        foundFlag = true;
+                        $scope.productCache[index].hitCount++;
+                    }
+                });
+                if (!foundFlag) {
+                    $scope.productCache.push({ key: text, hitCount: 1 });
+                }
+                $scope.productCache = $filter('orderBy')($scope.productCache, 'hitCount', true);
+
+                $customlocalstorage.setObject("recentSearch", $scope.productCache);
             }, function () {
                 console.warn("search post failed");
             });
@@ -821,6 +839,35 @@
             });
             return qty;
         };
+        $scope.isFavourite = function (itemid) {
+            var wishlist = $customlocalstorage.getObjectorDefault('wishlist', '[]');
+            var found = false;
+            angular.forEach(wishlist, function (value, index) {
+                if (value.id === itemid) {
+                    found = true;
+                }
+            });
+            return found;
+        }
+        $scope.toggleFavourite = function (item) {
+            var wishlist = [];
+            var wishlist = $customlocalstorage.getObjectorDefault('wishlist', '[]');
+            var found = false;
+            angular.forEach(wishlist, function (value,index) {
+                if(value.id === item.id)
+                {
+                    found = true;
+                    wishlist.splice(index, 1);
+                    ionicToast.show('<b>' + item.name + '</b> removed from Wishlist', 'bottom', false, 2000);
+                }
+            });
+            if (!found)
+            {
+                wishlist.push(item);
+                ionicToast.show('<b>' + item.name + '</b> added to Wishlist', 'bottom', false, 2000);
+            }
+            $customlocalstorage.setObject('wishlist', wishlist);
+        }
     }])
 
     .controller("productDetailCtrl", ["$scope", function ($scope) {
@@ -830,7 +877,7 @@
     .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
         $scope.displayProductDetailList = [];
         $scope.initProductDetailList = [];
-        angular.forEach($customlocalstorage.getObjectorDefault('cartlist','[]'), function (value, index) {
+        angular.forEach($customlocalstorage.getObjectorDefault('cartlist', '[]'), function (value, index) {
             var req = {
                 method: 'GET',
                 url: 'http://192.168.1.40:8080/product/' + value.productId,
@@ -851,6 +898,9 @@
             .then(function () {
                 if ($scope.data.confirm) {
                     var cartList = $customlocalstorage.getObject('cartlist', '[]');
+                    if (cartList.length <= 0) {
+                        $popupService.showAlert("No Items in the Cart! Please add some items");
+                    }
                     var orderData = {
                         orderDate: $filter('date')(new Date(), 'yyyy-MM-dd'),
                         customerId: "11",
@@ -882,14 +932,14 @@
                         console.log(data);
                     });
                 }
+                ionicTost.show("Your order has been submitted successfully!", false, 2500);
             });
         };
         $scope.updateCartList = function () {
             var cartList = $customlocalstorage.getObjectorDefault('cartlist', []);
             $scope.displayProductDetailList = [];
             angular.forEach($scope.initProductDetailList, function (value, index) {
-                if ($scope.returnNumber(value.id) !== 0)
-                {
+                if ($scope.returnNumber(value.id) !== 0) {
                     $scope.displayProductDetailList.push(value);
                 }
             });
@@ -949,14 +999,125 @@
         };
     }])
 
-    .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("wishlistCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
+        $scope.wishlist = $customlocalstorage.getObjectorDefault('wishlist', '[]');
+    }])
 
-        //$http.
+    .controller("profileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$cordovaCamera', '$popupService', function ($scope, $state, $customlocalstorage, $http, $cordovaCamera, $popupService) {
+        $scope.imageInfo = [];
+
+        navigator.camera.getPicture(function (imageData, vals) {
+            console.log(imageData);
+            console.log(vals);
+            var imageBase64 = "image base64 data";
+            var blob = new Blob([imageBase64], { type: 'image/png' });
+            console.log(blob);
+            var file = new File([imageData], 'imageFileName.png');
+            console.log(file);
+            $scope.imageInfo = imageData;
+            $http({
+                method: 'POST',
+                url: "http://192.168.1.40:8080/consumer/uploadImageFile/",
+                headers: { 'Content-Type': false },
+                transformRequest: function (data) {
+                    var formData = new FormData();
+                    formData.append("consumer_id", '12');
+                    formData.append('image_file', blob);
+                    return formData;
+                },
+                data: {}
+            }).then(function (res) {
+                console.log(res);
+                $popupService.showAlert('RESPONSe', res);
+            });
+
+        }, function (err) {
+            console.log(err);
+            $popupService.showAlert('Error', err);
+        }, {
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI
+        });
+
+        $scope.dataURItoBlob = function (dataURI) {
+            // convert base64/URLEncoded data component to raw binary data held in a string
+            var byteString = window.atob(dataURI.split(',')[1]);
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+
+            var bb = new Blob([ab], { "type": mimeString });
+            return bb;
+        }
+
         console.log('profileCtrl');
     }])
 
-    .controller("editprofileCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("editprofileCtrl", ["$scope", "$customlocalstorage", "$http", "$cordovaImagePicker", "$cordovaContacts", "ionicToast", function ($scope, $customlocalstorage, $http, $cordovaImagePicker, $cordovaContacts, ionicToast) {
         console.log('editprofileCtrl called');
+        $scope.addImage = function () {
+            var options = {
+                maximumImagesCount: 10,
+                width: 800,
+                height: 800,
+                quality: 80
+            };
+
+            $cordovaImagePicker.getPictures(options)
+              .then(function (results) {
+                  for (var i = 0; i < results.length; i++) {
+                      alert('Image URI: ' + results[i]);
+                  }
+              }, function (error) {
+                  console('Error: ' + JSON.stringify(error));
+              });
+        }
+        $scope.updateProfile = function (form) {
+
+            var reqObj = {
+                phone: $scope.form.phone,
+                address: $scope.form.address,
+                pincode: $scope.form.pincode,
+                email: $scope.form.email,
+                alternate_number: $scope.form.alternate_number,
+                uuid: device.uuid
+
+            };
+
+            $scope.updateProfile = $customlocalstorage.setObject("UpdatedProfile", reqObj);
+            ionicToast.show('Profile Updated Successfully!', 'middle', false, 2500);
+            $state.go("app.products");
+
+            //var req = {
+            //    method: 'PUT',
+            //    url: 'http://192.168.1.40:8080/register/add',
+            //    headers: {
+            //        'Content-Type': 'application/json'
+            //    },
+            //    data: JSON.stringify(reqObj)
+            //}
+
+            //$http(req).then(function (res) {
+            //    console.log(res.data);
+            //    if (res.data.registrationStatus == 'OK') {
+            //        loginSuccess = true;
+            //        $customlocalstorage.setObject('registration', res.data.id);
+            //        $customlocalstorage.set('idUserLogedIn', 'YES');
+            //        //console.log("CHK:" + $customlocalstorage.get('idUserLogedIn'));
+            //        console.log(res.data);
+            //        $state.go("retailers");
+            //    }
+            //    console.info("registration post success");
+            //}, function () {
+            //    console.warn("registration post failed");
+            //});
+
+        };
+
         $scope.paymentoption = [];
 
         //var addPreference = function () {
@@ -1018,8 +1179,38 @@
 
     }])
 
+    .controller("viewprofileCtrl", ["$scope", "$customlocalstorage", "$http", "$cordovaImagePicker", "$cordovaContacts", "ionicToast", function ($scope, $customlocalstorage, $http, $cordovaImagePicker, $cordovaContacts, ionicToast) {
+        console.log('viewprofileCtrl called');
+
+        $scope.yourProfileData = $customlocalstorage.getObjectorDefault("UpdatedProfile", "[]");
+
+    }])
+
     .controller("ordersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+        $scope.ordersList = [];
+        var customerID = 11;
+        $http.get('http://192.168.1.40:8080/order/customer/' + customerID).then(function (res) {
+            $scope.ordersList = res.data[1];
+        }, function (err) {
+            console.log(err);
+        });
+        $scope.showOrderItems = function (order) {
+            $state.go('orderDetail', { orderID: order.id });
+        };
         console.log('ordersCtrl');
+    }])
+
+    .controller("orderDetailCtrl", ['$scope', '$http', '$customlocalstorage', '$stateParams',
+    function ($scope, $http, $customlocalstorage, $stateParams) {
+        $scope.orderDetail = {};
+        console.log($stateParams.orderID);
+        $http.get('http://192.168.1.40:8080/order/order_id/' + $stateParams.orderID).then(function (res) {
+            $scope.orderDetail = res.data;
+            console.log($scope.orderDetail);
+        }, function (err) {
+            console.log(err);
+        });
+
     }])
 
     .controller("settingsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$popupService", function ($scope, $state, $customlocalstorage, $http, $popupService) {

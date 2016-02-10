@@ -21,6 +21,7 @@
                 </div>
             </div>
         </div>
+        Your current default retailer is:<h1><span style="color:blueviolet">{{retailer | uppercase}}</span></h1>
         <div class="card list" ng-show="data.isSearchResultShown">
             <ion-radio ng-model="data.choice" value="{{ret.id}}" ng-repeat="ret in data.retailers">
                 <div class="row">

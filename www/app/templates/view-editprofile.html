@@ -11,9 +11,11 @@
             <canvas id="canvas" class="circle" width="96" height="96"></canvas>
         <!--<label>Photo</label>-->
         <div class="item-icon-right">
-            <a class="item item-icon-right" ng-click="addImage()">
+            <a class="item item item-avatar" ng-click="addImage()">
                 Change Profile Picture
                 <img src="../../images/user-male.png" width="50" align="right" />
+
+               
                 <!--<div class="cropArea">
                     <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
 
@@ -43,23 +45,27 @@
         <div class="list">
             <label class="item item-input item-floating-label">
                 <span class="input-label">Phone Number</span>
-                <input type="text" placeholder="Phone Number">
+                <input type="text" placeholder="Phone Number" ng-model="form.phone">
             </label>
             <label class="item item-input item-floating-label">
-                <span class="input-label">Address Line 1</span>
-                <input type="text" placeholder="Address Line 1">
+                <span class="input-label">Email</span>
+                <input type="text" placeholder="Email" ng-model="form.email">
             </label>
             <label class="item item-input item-floating-label">
+                <span class="input-label">Address</span>
+                <input type="text" placeholder="Address"  ng-model="form.address">
+            </label>
+            <!--<label class="item item-input item-floating-label">
                 <span class="input-label">Address Line 2</span>
                 <input type="text" placeholder="Address Line 2">
-            </label>
+            </label>-->
             <label class="item item-input item-floating-label">
                 <span class="input-label">Pin Code</span>
-                <input type="text" placeholder="Pin Code">
+                <input type="text" placeholder="Pin Code"  ng-model="form.pincode">
             </label>
             <label class="item item-input item-floating-label">
                 <span class="input-label">Alt. Ph Number</span>
-                <input type="text" placeholder="Alt. Ph Number">
+                <input type="text" placeholder="Alt. Ph Number"  ng-model="form.alternate_number">
             </label>
         </div>
 
@@ -99,7 +105,7 @@
                               ng-click="toggleGroup(payment)"
                               ng-class="{active: isGroupShown(group)}">
                         <i class="icon" ng-class="isGroupShown(payment) ? 'ion-minus' : 'ion-plus'"></i>
-                        &nbsp;
+                        &nbsp;Preferences
                         <ion-item class="item-accordion"
                                   ng-repeat="itemtype in payment.paymentoptions"
                                   ng-show="isGroupShown(itemtype)">
@@ -122,7 +128,7 @@
                 </div>
 
             </ion-list>
-            later
+            <label>* These preferences will be made operation in near future</label>
 
         </io-content>
         <button class="button button-block button-positive" ng-click="updateProfile()">

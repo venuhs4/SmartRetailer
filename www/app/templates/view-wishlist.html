@@ -2,9 +2,18 @@
     <ion-nav-back-button>
     </ion-nav-back-button>
 </ion-nav-bar>
-<ion-view view-title="My Cart">
+<ion-view view-title="Wishlist">
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        Opps! No Wishlist
+        <div class="list card">
+            <a href="#" class="item item-icon-left" ng-repeat="item in wishlist">
+                <i class="icon ion-clipboard"></i>
+                <div class="row">
+                    <div class="col col-50">
+                        <h2>{{item.name}}</h2>
+                    </div>
+                </div>
+            </a>
+        </div>
     </ion-content>
 </ion-view>

@@ -30,13 +30,16 @@
             getObject: function (key) {
                 return JSON.parse($window.localStorage[key] || '{}');
             },
+            getObjectorDefault: function (key, defaultValue) {
+                return JSON.parse($window.localStorage[key] || defaultValue);
+            }
         };
 
         return $customlocalstorage;
     }]).factory('$productlist', ['$http', function ($http) {
         var products = null;
         console.log("get products");
-        $http.get("http://192.168.1.35:8080/product").success(function (res) {
+        $http.get("http://192.168.1.55:8080/product").success(function (res) {
             products = res;
             console.log(products);
             console.log("get products success");
@@ -52,19 +55,19 @@
         var category = [];
         $http({
             method: "GET",
-            url: "http://192.168.1.35:8080/category",
+            url: "http://192.168.1.55:8080/category",
         }).then(function (res) {
             category = res.data;
             angular.forEach(category, function (value, index) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.35:8080/category/segment/" + value.id
+                    url: "http://192.168.1.55:8080/category/segment/" + value.id
                 }).then(function (segmentsRes) {
                     category[index].segments = segmentsRes.data;
                     angular.forEach(category[index].segments, function (value2, index2) {
                         $http({
                             method: "GET",
-                            url: "http://192.168.1.35:8080/category/segment/subsegment/" + value2.id
+                            url: "http://192.168.1.55:8080/category/segment/subsegment/" + value2.id
                         }).then(function (subsegmentsRes) {
                             category[index].segments[index2].subsegment = subsegmentsRes.data;
                         });
@@ -79,7 +82,7 @@
             },
         };
     }])
-    .factory('$popupService', ['$ionicPopup', '$timeout','$http', function ($ionicPopup, $timeout,$http) {
+    .factory('$popupService', ['$ionicPopup', '$timeout', '$http', function ($ionicPopup, $timeout, $http) {
         return {
             showConfirm: function (title, template, data) {
 
@@ -114,5 +117,30 @@
             }
         };
     }])
-    ;
+    .factory('$stringResource', ["$http", function ($http) {
+        var allstrings = [];
+        $http.get("/data/string-resource.json").then(function (res) {
+            allstrings = res.data;
+        }, function (err) {
+            console.log(err);
+        });
+
+        return {
+            getValue: function (k) {
+                var finValue = '';
+                angular.forEach(allstrings, function (val, index) {
+                    if (val.Key === k) {
+                        console.log(val.Value);
+                        finValue = val.Value;
+                    }
+                });
+                return finValue;
+            }
+        }
+    }])
+    .factory('$config', function () {
+        return {
+            IP_PORT: "192.168.1.55:8080"
+        }
+    });
 })();

@@ -1,5 +1,6 @@
-﻿<ion-nav-bar>
-    <ion-nav-back-button>
+﻿<ion-nav-bar class="bar-positive">
+    <ion-nav-back-button class="button-clear">
+        <i class="ion-arrow-left-c"></i> Back
     </ion-nav-back-button>
 </ion-nav-bar>
 <ion-view view-title="My Cart">
@@ -7,7 +8,7 @@
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
 
         <div class="list card">
-            <div class="item" style="padding:1px !important" ng-repeat="item in productDetailList">
+            <div class="item" style="padding:1px !important" ng-repeat="item in displayProductDetailList">
                 <div class="row">
                     <div class="col col-25 imgcontainer" ng-click="onProductClick(item)">
                         <img src="bag-item-1.png" />

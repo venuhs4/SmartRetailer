@@ -107,10 +107,19 @@
         },
         "pushbots-cordova-plugin": {
             "PACKAGE_NAME": "io.cordova.myappaa490b"
+        },
+        "cordova-plugin-media-capture": {
+            "PACKAGE_NAME": "io.cordova.myappaa490b"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "io.cordova.myappaa490b"
         }
     },
     "dependent_plugins": {
         "cordova-plugin-android-support-v4": {
+            "PACKAGE_NAME": "io.cordova.myappaa490b"
+        },
+        "cordova-plugin-file": {
             "PACKAGE_NAME": "io.cordova.myappaa490b"
         }
     }

@@ -1,0 +1,71 @@
+﻿
+<ion-view view-title="View Your Profile">
+    <ion-header-bar class="bar-header bar-royal">
+        <div class="title">View Your Profile</div>
+        <div class="buttons">
+            <button class="button button-clear icon ion-clipboard"></button>
+        </div>
+    </ion-header-bar>
+    <ion-content class="padding">
+        <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        <div class="item-icon-right">
+            <div class="col col-33 col-offset-90">
+                <a class="item item-icon-right item item-avatar">
+                    <img src="../../images/user-male.png" />
+                </a>
+            </div>
+        </div>
+        <div>
+
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <i class="ion-email">
+                     Your Email:{{yourProfileData.email}}
+                    </i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <i class="ion-email">
+                  Your Address:{{yourProfileData.address}},{{yourProfileData.pincode}}
+                    </i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <i class="ion-email">
+                   Your Phone:{{yourProfileData.phone}}
+                    </i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <i class="ion-email">
+                        Your Alt.Number:{{yourProfileData.alternate_number}}
+                    </i>
+                </div>
+            </div>
+            
+
+        </div>
+        <a class="item item-icon-left" href="#/app/editProfile" ng-click="closePopover()">
+            <i class="icon ion-ios-gear"></i>
+            Edit profile
+        </a>
+    </ion-content>
+</ion-view>
+<style type="text/css">
+    .error-tag {
+        color: red;
+    }
+</style>
+
+<!--#profile-image {
+        display: block;
+        border-radius: 100px;
+        border: 1px solid #fff;
+        width: 128px;
+        height: 128px;
+        margin: 30px auto 0;
+        box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+      }-->

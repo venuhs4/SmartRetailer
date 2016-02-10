@@ -1,9 +1,8 @@
-﻿
-<ion-nav-bar>
-    <ion-nav-back-button>
+﻿<ion-nav-bar class="bar-positive">
+    <ion-nav-back-button class="button-clear">
+        <i class="ion-arrow-left-c"></i> Back
     </ion-nav-back-button>
 </ion-nav-bar>
-
 <ion-view view-title="">
     <ion-nav-buttons side="primary">
         <label class="item-input">
@@ -11,14 +10,16 @@
             <input type="search" placeholder="Search" ng-change="searchSuggestion()" ng-model="data.searchkey">
         </label>
     </ion-nav-buttons>
-
     <ion-content class="has-header padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
         <div class="list" ng-if="categoryProductShow" style="padding:1px !important">
+            <!--<ion-scroll zooming="true" direction="x" scrollbar-x="false" ng-if="categoryProductShow">
+                <p >{{categorySelection.category}} >{{categorySelection.segment}}>{{categorySelection.subSegment}}</p>
+            </ion-scroll>-->
             <div class="item" style="padding:1px !important" ng-repeat="item in parentProducts.products track by $index">
                 <div class="row">
-                    <div class="col col-25 imgcontainer"  ng-click="onProductClick(item)">
-                        <img src="../../images/bag-item-1.png" />
+                    <div class="col col-25 imgcontainer" ng-click="onProductClick(item)">
+                        <img src="bag-item-1.png" />
                     </div>
                     <div class="col col-50" ng-click="onProductClick(item)">
                         <h3>{{item.name}}</h3>
@@ -40,6 +41,7 @@
                 </div>
             </div>
         </div>
+       
         <div class="list" ng-if="suggestionShow">
             <div class="item" ng-repeat="text in searchList track by $index" ng-click="suggestionClick(text)">
                 <p>{{text}}</p>
@@ -48,8 +50,8 @@
         <div class="list card" ng-if="productShow">
             <div class="item" style="padding:1px !important" ng-repeat="item in productDetailList track by $index">
                 <div class="row">
-                    <div class="col col-25 imgcontainer"  ng-click="onProductClick(item)">
-                        <img src="../../images/bag-item-1.png" />
+                    <div class="col col-25 imgcontainer" ng-click="onProductClick(item)">
+                        <img src="bag-item-1.png" />
                     </div>
                     <div class="col col-50" ng-click="onProductClick(item)">
                         <h3>{{item.name}}</h3>

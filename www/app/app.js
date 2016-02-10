@@ -19,20 +19,20 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-           // $urlRouterProvider.otherwise("/app/products");
+            $urlRouterProvider.otherwise("/app/products");
 
-            if (idUserLogedIn == null) {
-                console.warn("user not loged in");
-                $urlRouterProvider.otherwise("/login");
-            }
-            else if (isDefaultRetailerSet == null) {
-                console.warn("default retailer not set");
-                $urlRouterProvider.otherwise("/retailers");
-            }
-            else {
-                console.info('everything set');
-                $urlRouterProvider.otherwise("/app/products");
-            }
+            //if (idUserLogedIn == null) {
+            //    console.warn("user not loged in");
+            //    $urlRouterProvider.otherwise("/login");
+            //}
+            //else if (isDefaultRetailerSet == null) {
+            //    console.warn("default retailer not set");
+            //    $urlRouterProvider.otherwise("/retailers");
+            //}
+            //else {
+            //    console.info('everything set');
+            //    $urlRouterProvider.otherwise("/app/products");
+            //}
             $stateProvider
             .state("app", {
                 url: "/app",
@@ -92,6 +92,14 @@
                 templateUrl: "app/templates/view-orders.html",
                 controller: "ordersCtrl"
             })
+            .state("orderDetail", {
+                url: '/orderdetails',
+                templateUrl: "app/templates/view-order-detail.html",
+                controller: 'orderDetailCtrl',
+                params: {
+                    orderID:''
+                }
+            })
             .state("settings", {
                 url: "/settings",
                 templateUrl: "app/templates/view-settings.html",
@@ -127,6 +135,21 @@
                 templateUrl: "app/templates/view-addtocart.html",
                 controller: "addToCartCtrl"
             })
+            .state("app.editProfile", {
+                url: "/editProfile",
+                templateUrl: "app/templates/view-editprofile.html",
+                controller: "editprofileCtrl"
+            })
+            .state("app.viewprofile", {
+                url: "/viewprofile",
+                templateUrl: "app/templates/view-viewprofile.html",
+                controller: "viewprofileCtrl"
+            })
+            .state("app.wishlist", {
+                url: "/wishlist",
+                templateUrl: "app/templates/view-wishlist.html",
+                controller: "wishlistCtrl"
+            })
             .state("app.bannerdetails", {
                 url: "/bannerdetails",
                 templateUrl: "app/templates/view-banner-detail.html",
@@ -135,8 +158,6 @@
                     bannerID: 'default',
                 },
             })
-
-
             ;
         });
 })();

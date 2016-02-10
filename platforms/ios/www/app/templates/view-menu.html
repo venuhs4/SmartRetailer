@@ -6,18 +6,18 @@
                 <button menu-toggle="left" class="button button-icon icon ion-navicon-round"></button>
             </ion-nav-buttons>
             <ion-nav-buttons side="right">
-                <button ng-click="openPopover($event)" class="button button-icon icon ion-android-more-vertical"></button>
+                <button ng-click="openPopover($event)" class="button button-icon icon ion-android-more-vertical">
+                </button>
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view animation="slide-left-right"></ion-nav-view>
     </ion-side-menu-content>
 
-    <ion-side-menu side="left">
+    <ion-side-menu side="left" >
         <header class="bar bar-header bar-royal">
             <h1 class="title">Menu</h1>
         </header>
         <ion-content class="has-header">
-
             <ion-list>
                 <div ng-repeat="cat in category">
                     <ion-item class="item-stable item-icon-right"
@@ -38,7 +38,7 @@
                         <ion-item menu-close class="item-accordion"
                                   ng-repeat="subSeg in seg.subSegments"
                                   ng-show="isSegShown(seg) && isGroupShown(cat)"
-                                  ng-click="getProducts(cat.id,seg.id,subSeg.id)" href="#/app/productsuggestion">
+                                  ng-click="getProducts(cat.id,seg.id,subSeg.id,subSeg.name)" href="#/app/productsuggestion">
                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#999999">{{subSeg.name}}</span>
                         </ion-item>
                     </div>
@@ -55,12 +55,10 @@
     <ion-popover-view>
         <ion-content class="contendheight">
             <div class="list">
-                <a class="item item-icon-left" href="#/profile" ng-click="closePopover()">
+                <a class="item item-icon-left" ng-click="closePopover()" href="#/profile" >
                     <i class="icon ion-person"></i>
                     Update Profile
                 </a>
-
-
                 <a class="item item-icon-left" href="#/retailers" ng-click="closePopover()">
                     <i class="icon ion-android-person-add"></i>
                     Update Vendor
@@ -74,7 +72,10 @@
                     <i class="icon ion-document"></i>
                     Legal
                 </a>
-
+                <a class="item item-icon-left" href="#/settings" ng-click="closePopover()">
+                    <i class="icon ion-ios-gear"></i>
+                    Settings
+                </a>
                 <a class="item item-icon-left" href="#/contactus" ng-click="closePopover()">
                     <i class="icon ion-android-contact"></i>
                     Contact Us
@@ -109,7 +110,7 @@
     }
 
     .list .item.item-accordion.ng-hide {
-        line-height: 0px;
+        line-height: 0;
     }
 
     .list .item.item-accordion.ng-hide-add,

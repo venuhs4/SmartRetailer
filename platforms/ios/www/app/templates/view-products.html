@@ -1,8 +1,10 @@
-﻿<ion-view view-title="Home">
+﻿<ion-view>
+
     <ion-nav-buttons side="primary">
-        <a style="color: white;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
+        <a href="#/app/productsuggestion"><img src="../../images/logo.png" style="height:35px; width:30px;" /></a>
+        <a style="color: black;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
         <div>
-            <a style="color: white;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">
+            <a style="color: black;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">
                 <span class="badge badge-assertive" ng-show="parentObj.cartCount !== 0">{{parentObj.cartCount}}</span>
             </a>
         </div>
@@ -14,11 +16,12 @@
                        slide-interval="3000"
                        show-pager="true"
                        pager-click="changeSlide(index)">
-            <ion-slide ng-repeat="id in [1,2,3]">
-                <img ng-src="../../images/banner-add ({{id}}).jpg" style="width:300px;height:300px;margin:auto;display:block">
+            <ion-slide ng-repeat="id in [1,2,3]" ng-click="showBannerDetails(id)">
+                <img ng-src="images/banner-add ({{id}}).jpg" style="width:300px;height:300px;margin:auto;display:block">
+                <!--<img ng-src="https://www.petfinder.com/wp-content/uploads/2012/11/140272627-grooming-needs-senior-cat-632x475.jpg" style="width:300px;height:300px;margin:auto;display:block"/>-->
             </ion-slide>
         </ion-slide-box>
-        <button class="button button-block" ng-click="showAlert()">
+        <button class="button button-block" ng-click="showPopup()">
             Daily Needs
         </button>
         <button class="button button-block" ng-click="showPopup()">
@@ -30,4 +33,19 @@
         <button class="button button-block">
             Wishlist
         </button>
+
+        <div class="row">
+            <div class="col col:25">
+                <button class="button button-postitive" ng-click="getsmiley()">
+                    <i class="ion-happy"></i>
+                </button>
+            </div>
+
+            <a class="button button-postitive" href="#/app/feedback" ng-click="sendfeedback()">
+                <i class="ion-edit"></i>
+            </a>
+            <!--<button class="button" ng-click="getfeedback()">
+
+            </button>-->
+        </div>
     </ion-content>
