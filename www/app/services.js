@@ -39,7 +39,7 @@
     }]).factory('$productlist', ['$http', function ($http) {
         var products = null;
         console.log("get products");
-        $http.get("http://192.168.1.55:8080/product").success(function (res) {
+        $http.get("http://192.168.1.40:8080/product").success(function (res) {
             products = res;
             console.log(products);
             console.log("get products success");
@@ -55,19 +55,19 @@
         var category = [];
         $http({
             method: "GET",
-            url: "http://192.168.1.55:8080/category",
+            url: "http://192.168.1.40:8080/category",
         }).then(function (res) {
             category = res.data;
             angular.forEach(category, function (value, index) {
                 $http({
                     method: "GET",
-                    url: "http://192.168.1.55:8080/category/segment/" + value.id
+                    url: "http://192.168.1.40:8080/category/segment/" + value.id
                 }).then(function (segmentsRes) {
                     category[index].segments = segmentsRes.data;
                     angular.forEach(category[index].segments, function (value2, index2) {
                         $http({
                             method: "GET",
-                            url: "http://192.168.1.55:8080/category/segment/subsegment/" + value2.id
+                            url: "http://192.168.1.40:8080/category/segment/subsegment/" + value2.id
                         }).then(function (subsegmentsRes) {
                             category[index].segments[index2].subsegment = subsegmentsRes.data;
                         });
@@ -140,7 +140,7 @@
     }])
     .factory('$config', function () {
         return {
-            IP_PORT: "192.168.1.55:8080"
+            IP_PORT: "192.168.1.40:8080"
         }
     });
 })();

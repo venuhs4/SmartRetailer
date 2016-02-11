@@ -1,22 +1,48 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-    <div>
-        <ion-view view-title="Contact Us">
+﻿
+<ion-view title="Contact Us">
+    <ion-header-bar class="bar-header bar-royal">
+         <i class="button button-clear icon ion-flag"></i>
+        
+    </ion-header-bar>
+    <ion-content>
 
-            <ion-content>
-                <p >
-                    
-                    Phone:9945238564<br>
-                    Email:info@softserveglobal.com
-                </p>
+        <div class="card">
+            <div class="item item-text-wrap">
+                <h2>
+                    <i class="ion-android-email"></i>
+                    <label style="font-size:large;font-family:Kalinga;">Email:smartretail@gmail.com</label>
+                </h2>
 
-            </ion-content>
-        </ion-view>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="item item-text-wrap">
+                <h2>
+                    <i class="ion-android-call"></i>
+                    <label style="font-size:large;font-family:Kalinga;">Phone:080-5521144255632</label>
+                </h2>
+
+            </div>
+        </div>  
+        <style>
+            .highlighted {
+                background: yellow;
+            }
+        </style>
+        <div>
+            <input type="text" placeholder="Search" ng-model="search.text"><br><br>
+            <!-- with filter -->
+            <div ng-repeat="item in data | filter:search.text"
+                 ng-bind-html="item.text | highlight:search.text">
+            </div>
+        </div> 
+
+    </ion-content>
+    <div class="bar bar-footer bar-balanced">
+        <div class="title">CopyRight with SmartRetail Pvt Ltd</div>
     </div>
 
-</body>
-</html>
+
+
+</ion-view>

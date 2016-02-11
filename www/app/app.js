@@ -19,7 +19,7 @@
             var idUserLogedIn = localStorage['idUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            $urlRouterProvider.otherwise("/app/products");
+            $urlRouterProvider.otherwise("/app/editProfile");
 
             //if (idUserLogedIn == null) {
             //    console.warn("user not loged in");
@@ -56,7 +56,7 @@
                 templateUrl: "app/templates/view-login.html",
                 controller: "loginCtrl"
             })
-            .state("retailers", {
+            .state("app.retailers", {
                 url: "/retailers",
                 templateUrl: "app/templates/view-retailers.html",
                 controller: "retailersCtrl"
@@ -82,17 +82,17 @@
                 templateUrl: "app/templates/view-productsuggestion.html",
                 controller: "productsuggestionCtrl"
             })
-            .state("profile", {
-                url: "/profile",
-                templateUrl: "app/templates/view-profile.html",
-                controller: "profileCtrl"
-            })
-            .state("orders", {
+            //.state("app.viewprofile", {
+            //    url: "/viewprofile",
+            //    templateUrl: "app/templates/view-viewprofile.html",
+            //    controller: "viewprofileCtrl"
+            //})
+            .state("app.orders", {
                 url: "/orders",
                 templateUrl: "app/templates/view-orders.html",
                 controller: "ordersCtrl"
             })
-            .state("orderDetail", {
+            .state("app.orderDetail", {
                 url: '/orderdetails',
                 templateUrl: "app/templates/view-order-detail.html",
                 controller: 'orderDetailCtrl',
@@ -100,17 +100,17 @@
                     orderID:''
                 }
             })
-            .state("settings", {
+            .state("app.settings", {
                 url: "/settings",
                 templateUrl: "app/templates/view-settings.html",
                 controller: "settingsCtrl"
             })
-            .state("feedback", {
+            .state("app.feedback", {
                 url: "/feedback",
                 templateUrl: "app/templates/view-feedback.html",
                 controller: "feedbackCtrl"
             })
-            .state("legal", {
+            .state("app.legal", {
                 url: "/legal",
                 templateUrl: "app/templates/view-legal.html",
                 controller: "legalCtrl"
@@ -125,7 +125,7 @@
                 templateUrl: "app/templates/view-updatevendor.html",
                 controller: "updateVendorCtrl"
             })
-            .state("contactus", {
+            .state("app.contactus", {
                 url: "/contactus",
                 templateUrl: "app/templates/view-contactus.html",
                 controller: "contactUsCtrl"

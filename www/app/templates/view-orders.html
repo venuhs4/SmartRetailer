@@ -1,4 +1,9 @@
-﻿<ion-view view-title="orders">
+﻿<ion-nav-bar class="bar-positive">
+    <ion-nav-back-button class="button-clear">
+        <i class="ion-arrow-left-c"></i> Back
+    </ion-nav-back-button>
+</ion-nav-bar>
+<ion-view view-title="orders">
     <ion-header-bar class="bar-header bar-dark">
         <div class="buttons">
             <button class="button button-clear icon ion-bag"></button>
@@ -7,11 +12,34 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="list card">
-            <a href="#" class="item item-icon-left" ng-repeat="item in ['Item 1','Item 2','Item 3','Item 4','Item 5','Item 6','Item 7']">
-                <i class="icon ion-coffee"></i>
-                {{item}}
+        <div class="list card" ng-repeat="order in ordersList | orderBy :'count'"  ng-click="showOrderItems(order)">
+            <a href="#" class="item item-icon-left">
+                <i class="icon ion-clipboard"></i>
+                <div class="row">
+                    <div class="col col-50">
+                        <h2>Order(#{{order.id}})</h2>
+                        <p>Items : {{order.count}}</p>
+                    </div>
+                    <div class="col col-50">
+                        <h3 style="text-align:right">{{order.date}}</h3>
+                        <h2 ng-class="order.status">{{order.status}}</h2>
+                    </div>
+                </div>
             </a>
         </div>
     </ion-content>
 </ion-view>
+<style type="text/css">
+    .NEW {
+        color:chartreuse;
+        text-align:right;
+    }
+    .DELIVERED {
+        color:coral;
+        text-align:right;
+    }
+    .PROCESSING{
+        color:blueviolet;
+        text-align:right;
+    }
+</style>

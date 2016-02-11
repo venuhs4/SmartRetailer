@@ -45,7 +45,7 @@
     </ion-content>
     <ion-footer-bar class="bar" ng-show="data.choice">
         <button class="button button-positive button-block" ng-click="setAsDefaultRetailer()">
-            Set {{ (retailers | filter:{id:data.choice})[0].storename | uppercase }} as default Retailer
+            Set {{ (data.retailers | filter:{id:data.choice})[0].storename | uppercase }} as default Retailer
         </button>
     </ion-footer-bar>
 </ion-view>

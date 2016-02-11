@@ -3,7 +3,7 @@
 
     angular.module("myapp.controllers", ['myapp.utils', 'ionic', 'ngCordova', 'ionic-toast'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", "ionicToast", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService, ionicToast) {
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", "ionicToast", "$config", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService, ionicToast, $config) {
         $scope.retailer = "";
         $scope.category = [];
         $scope.categorySelection = {
@@ -31,6 +31,13 @@
             console.log("position fail");
             console.log(err);
         });
+
+        //var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
+        //deviceInfo.get(function (result) {
+        //    console.log("result = " + result);
+        //}, function () {
+        //    console.log("error");
+        //});
 
         $scope.parentProducts = {
             products: []
@@ -197,11 +204,23 @@
         //}
         $scope.getsmiley = function () {
             console.log("smiley called");
-            ionicToast.show('Thank you for liking us!', 'middle', false, 2000);
-            $state.go("app.products");
-            $scope.hideToast = function () {
-                ionicToast.hide();
+
+
+
+            var reqObj = {
+
+                date: $filter('date')(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+                customerId: '11',
+                orderId: "10",
+                rate: 3,
+                uuid: device.uuid,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;' }
+
             };
+            $http.put('http://' + $config.IP_PORT + '/satisfaction/add/' + reqObj.date + '/' + reqObj.rate + '/' + reqObj.customerId + '/' + reqObj.orderId)
+            .success(function () {
+                ionicToast.show('Thank you for liking us!', 'middle', false, 1000);
+            })
             console.log('smiley submitted with data');
         }
 
@@ -419,7 +438,7 @@
             angular.forEach($scope.retailers, function (value, index) {
                 if (value.id == $scope.data.choice) {
                     $customlocalstorage.setObject("defaultRetailer", value);
-                    $state.go('products');
+                    $state.go('app.products');
                 }
             });
 
@@ -432,7 +451,7 @@
         // console.log($stateParams.bannerID);
     }])
 
-    .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', '$config', function ($scope, $state, $customlocalstorage, $http, $rootScope, $config) {
+    .controller("retailersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", '$rootScope', '$config', 'ionicToast', function ($scope, $state, $customlocalstorage, $http, $rootScope, $config, ionicToast) {
         $scope.data = {
             searchkey: '',
             suggestions: [],
@@ -493,11 +512,27 @@
             angular.forEach($scope.data.retailers, function (value, index) {
                 if (value.id == $scope.data.choice) {
 
-
-                    $customlocalstorage.setObject("defaultRetailer", value);
-                    console.log("default reatiler set");
-                    console.log(value);
-                    $state.go('register', { retailerID: value.id });
+                    $http({
+                        url: 'http://192.168.1.40:8080/consumer/setDefaultRetailer/' + 12 + '/' + value.id,
+                        method: 'PUT'
+                    }).then(function (res) {
+                        console.log(res);
+                        if (res.status === 200) {
+                            $customlocalstorage.setObject("defaultRetailer", value);
+                            console.log(value.storename);
+                            var setStoreName = value.storename;
+                            ionicToast.show("Your default Retailer has been changed to " + value.storename.toUpperCase(), "middle", false, 2500);
+                            console.log("default reatiler set");
+                            console.log(value);
+                            $state.go('register', { retailerID: value.id });
+                        }
+                        else {
+                            ionicToast.show("Oops! Default Retailer not set", "middle", false, 2500);
+                        }
+                    }, function (err) {
+                        console.log(err);
+                        ionicToast.show("Oops! Default Retailer not set", "middle", false, 2500);
+                    });
                 }
             });
             $rootScope.$emit("CallSetFooterRetailer", {});
@@ -688,6 +723,9 @@
         $scope.gotoWishlist = function () {
             $state.go('app.wishlist');
         };
+        $scope.gotoOrders = function () {
+            $state.go('app.orders');
+        };
         //$scope.setAsDefaultRetailer = function () {
         //    console.log($customlocalstorage.getObject("defaultRetailer"));
 
@@ -701,7 +739,7 @@
         //}
     }])
 
-    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http","ionicToast", function ($scope, $state, $customlocalstorage, $http, ionicToast) {
+    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", function ($scope, $state, $customlocalstorage, $http, ionicToast) {
         console.log('productsuggestionCtrl');
         $scope.data = { searchkey: '' };
         $scope.productList = [];
@@ -853,16 +891,14 @@
             var wishlist = [];
             var wishlist = $customlocalstorage.getObjectorDefault('wishlist', '[]');
             var found = false;
-            angular.forEach(wishlist, function (value,index) {
-                if(value.id === item.id)
-                {
+            angular.forEach(wishlist, function (value, index) {
+                if (value.id === item.id) {
                     found = true;
                     wishlist.splice(index, 1);
                     ionicToast.show('<b>' + item.name + '</b> removed from Wishlist', 'bottom', false, 2000);
                 }
             });
-            if (!found)
-            {
+            if (!found) {
                 wishlist.push(item);
                 ionicToast.show('<b>' + item.name + '</b> added to Wishlist', 'bottom', false, 2000);
             }
@@ -874,7 +910,8 @@
         $scope.product = { Name: "sdfdsf" };
     }])
 
-    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource) {
+    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", "ionicToast",
+    function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource, ionicToast) {
         $scope.displayProductDetailList = [];
         $scope.initProductDetailList = [];
         angular.forEach($customlocalstorage.getObjectorDefault('cartlist', '[]'), function (value, index) {
@@ -924,6 +961,7 @@
                     };
                     console.log(orderData);
                     $http(orderReq).success(function (res, status) {
+                        $customlocalstorage.set("OrderId", res.data);
                         console.log(res);
                         console.log(status);
                         console.log("post success");
@@ -932,7 +970,8 @@
                         console.log(data);
                     });
                 }
-                ionicTost.show("Your order has been submitted successfully!", false, 2500);
+
+                ionicToast.show('Your order has been submitted Successfully!', 'middle', false, 2500);
             });
         };
         $scope.updateCartList = function () {
@@ -1057,25 +1096,65 @@
         console.log('profileCtrl');
     }])
 
-    .controller("editprofileCtrl", ["$scope", "$customlocalstorage", "$http", "$cordovaImagePicker", "$cordovaContacts", "ionicToast", function ($scope, $customlocalstorage, $http, $cordovaImagePicker, $cordovaContacts, ionicToast) {
+    .controller("editprofileCtrl", ["$scope", "$customlocalstorage", "$http", "$cordovaImagePicker", "$cordovaContacts", "ionicToast", '$cordovaCamera', '$popupService', function ($scope, $customlocalstorage, $http, $cordovaImagePicker, $cordovaContacts, ionicToast, $cordovaCamera, $popupService) {
         console.log('editprofileCtrl called');
-        $scope.addImage = function () {
-            var options = {
-                maximumImagesCount: 10,
-                width: 800,
-                height: 800,
-                quality: 80
-            };
+        $scope.image = {
+            currentImage:''
+        };
+        $scope.editProfileImage = function () {
+            $scope.imageInfo = '';
 
-            $cordovaImagePicker.getPictures(options)
-              .then(function (results) {
-                  for (var i = 0; i < results.length; i++) {
-                      alert('Image URI: ' + results[i]);
-                  }
-              }, function (error) {
-                  console('Error: ' + JSON.stringify(error));
-              });
-        }
+            navigator.camera.getPicture(function (imageData, vals) {
+                console.log(imageData);
+                console.log(vals);
+                var imageBase64 = "image base64 data";
+                var blob = new Blob([imageBase64], { type: 'image/png' });
+                console.log(blob);
+                var file = new File([imageData], 'imageFileName.png');
+                console.log(file);
+                $scope.imageInfo = imageData;
+                var Parsefile = new Parse.File("img.png", imageData);
+                console.log(Parsefile);
+
+                $http({
+                    method: 'POST',
+                    url: "http://192.168.1.40:8080/consumer/uploadImageFile/",
+                    headers: { 'Content-Type': false },
+                    transformRequest: function (data) {
+                        var formData = new FormData();
+                        formData.append("consumer_id", '12');
+                        formData.append('image_file', $scope.image.currentImage);
+                        return formData;
+                    },
+                    data: {}
+                }).then(function (res) {
+                    console.log(res);
+                    $popupService.showAlert('RESPONSe', res);
+                });
+
+            }, function (err) {
+                console.log(err);
+                $popupService.showAlert('Error', err);
+            }, {
+                quality: 50,
+                destinationType: Camera.DestinationType.FILE_URI
+            });
+
+            $scope.dataURItoBlob = function (dataURI) {
+                // convert base64/URLEncoded data component to raw binary data held in a string
+                var byteString = window.atob(dataURI.split(',')[1]);
+                var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+                var ab = new ArrayBuffer(byteString.length);
+                var ia = new Uint8Array(ab);
+                for (var i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+
+                var bb = new Blob([ab], { "type": mimeString });
+                return bb;
+            }
+        };
         $scope.updateProfile = function (form) {
 
             var reqObj = {
@@ -1085,8 +1164,12 @@
                 email: $scope.form.email,
                 alternate_number: $scope.form.alternate_number,
                 uuid: device.uuid
-
             };
+            $http.put('http://' + $config.IP_PORT + '/feedback/add/' + reqObj.date + '/' + reqObj.feedbackText + '/' + reqObj.customerId)
+                .success(function (res) {
+                    console.log(res);
+
+                });
 
             $scope.updateProfile = $customlocalstorage.setObject("UpdatedProfile", reqObj);
             ionicToast.show('Profile Updated Successfully!', 'middle', false, 2500);
@@ -1117,14 +1200,7 @@
             //});
 
         };
-
         $scope.paymentoption = [];
-
-        //var addPreference = function () {
-        //    var paymentoption = {
-        //        "Credit Card": "null",
-        //    "Debit Card":"null"};
-
         var req = $http({
             method: "GET",
             url: "..//data//preferences.json",
@@ -1135,15 +1211,10 @@
             console.log(res.data[0].paymentoptions);
             console.log(res.data[1].deliverytime);
 
-            //angular.forEach(res.data, function (item) {
-            //    if (item.$scope.paymentoption === "paymentoption") {
-
-
             console.log("payment selection success1");
         }, function () {
             console.log("category request failed");
         });
-
 
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
@@ -1182,7 +1253,28 @@
     .controller("viewprofileCtrl", ["$scope", "$customlocalstorage", "$http", "$cordovaImagePicker", "$cordovaContacts", "ionicToast", function ($scope, $customlocalstorage, $http, $cordovaImagePicker, $cordovaContacts, ionicToast) {
         console.log('viewprofileCtrl called');
 
-        $scope.yourProfileData = $customlocalstorage.getObjectorDefault("UpdatedProfile", "[]");
+        // $scope.yourProfileData = $customlocalstorage.getObjectorDefault("UpdatedProfile", "[]");
+        var req = {
+            url: "http://192.168.1.40:8080/consumer/id/11",
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+        }
+        $scope.yourProfileDetails = {
+
+        }
+        $http(req).success(function (res) {
+            angular.forEach(res, function () {
+                $scope.yourProfileDetails = res;
+                // $scope.yourProfileDetails=JSON.stringify(res);   
+            })
+
+
+            console.log($scope.yourProfileDetails);
+
+        })
 
     }])
 
@@ -1195,7 +1287,7 @@
             console.log(err);
         });
         $scope.showOrderItems = function (order) {
-            $state.go('orderDetail', { orderID: order.id });
+            $state.go('app.orderDetail', { orderID: order.id });
         };
         console.log('ordersCtrl');
     }])
@@ -1228,22 +1320,37 @@
         }
     }])
 
-    .controller("feedbackCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", function ($scope, $state, $customlocalstorage, $http, ionicToast) {
-        console.log('feedbackCtrl called');
-        $scope.sendfeedback = function () {
-            console.log("thanks for feedback");
+    .controller("feedbackCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", "$filter", "$config", function ($scope, $state, $customlocalstorage, $http, ionicToast, $filter, $config) {
+        $scope.form = {
+            feedbackText: ""
         };
-        var showToast = function () {
 
-            ionicToast.show('Thanks for Your feedback!', 'middle', false, 500);
-        };
-        $scope.hideToast = function () {
-            ionicToast.hide();
+        console.log('feedbackCtrl called');
+        $scope.submitfeedback = function (form) {
+            console.log("submit feedback called");
+            var reqObj = {
+                feedbackText: $scope.form.feedbackText,
+                date: $filter('date')(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+                customerId: "11",
+                uuid: device.uuid,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;' }
+
+            };
+            $http.put('http://' + $config.IP_PORT + '/feedback/add/' + reqObj.date + '/' + reqObj.feedbackText + '/' + reqObj.customerId)
+                .success(function () {
+                    ionicToast.show('Thanks for Your feedback!', 'middle', false, 1000);
+                    $state.go('app.products');
+                });
         };
     }])
 
-    .controller("legalCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
+    .controller("legalCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", function ($scope, $state, $customlocalstorage, $http, ionicToast) {
         console.log('legalCtrl');
+
+        $scope.confirmTerms = function () {
+            ionicToast.show("Terms has been accepted", "middle", false, 1000);
+            $state.go('app.retailers');
+        }
     }])
 
     .controller("updateVendorCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
@@ -1257,7 +1364,12 @@
 
     .controller("contactUsCtrl", ["$scope", "$state", "$customlocalstorage", "$http", function ($scope, $state, $customlocalstorage, $http) {
         console.log('contactUsCtrl');
+
+
+
+
     }])
+
 
     .controller("errorCtrl", ["$scope", "myappService", function ($scope, myappService) {
         //public properties that define the error message and if an error is present

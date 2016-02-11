@@ -8,51 +8,68 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="item-icon-right">
-            <div class="col col-33 col-offset-90">
-                <a class="item item-icon-right item item-avatar">
-                    <img src="../../images/user-male.png" />
-                </a>
-            </div>
-        </div>
+        <label style="font-size:large;font-family:Kalinga;">Profile Photo</label>
+            <div class="item-icon-right" style="text-align:center;">
+                <div class="col col-33 col-offset-90">                     
+                    <a class="item item-icon-right item item-avatar">
+                     <img src="../../images/user-male.png" />
+                    </a>
+                </div>
+            </div>        
         <div>
 
             <div class="card">
                 <div class="item item-text-wrap">
-                    <i class="ion-email">
-                     Your Email:{{yourProfileData.email}}
-                    </i>
+                    <h2>
+                        <i class="icon ion-person">
+                            <label style="font-size:large;font-family:Kalinga;">Name:</label>{{yourProfileDetails[1][0].name}}
+                        </i>
+                    </h2>
                 </div>
             </div>
             <div class="card">
                 <div class="item item-text-wrap">
-                    <i class="ion-email">
-                  Your Address:{{yourProfileData.address}},{{yourProfileData.pincode}}
-                    </i>
+                    <h2>
+                        <i class="ion-location">
+                            <label style="font-size:large;font-family:Kalinga;"> Address:</label>{{yourProfileDetails[1][0].address}},{{yourProfileDetails[1][0].zip_code}}
+                        </i>
+                    </h2>
                 </div>
             </div>
             <div class="card">
                 <div class="item item-text-wrap">
-                    <i class="ion-email">
-                   Your Phone:{{yourProfileData.phone}}
-                    </i>
+                    <h2>
+                        <i class="ion-android-mail"></i>
+                        <label style="font-size:large;font-family:Kalinga;">Email:</label>{{yourProfileDetails[1][0].mail_id}}
+                    </h2>
+
                 </div>
             </div>
-            <div class="card">
+            <div class="card  card-icon-right">
                 <div class="item item-text-wrap">
-                    <i class="ion-email">
-                        Your Alt.Number:{{yourProfileData.alternate_number}}
-                    </i>
+                    <h2>
+                        <i class="ion-android-call"> </i>
+                        <label style="font-size:large;font-family:Kalinga;">
+                           State:
+                        </label>
+                        {{yourProfileDetails[1][0].state}}
+                    </h2>
+                    
                 </div>
             </div>
-            
 
         </div>
-        <a class="item item-icon-left" href="#/app/editProfile" ng-click="closePopover()">
-            <i class="icon ion-ios-gear"></i>
-            Edit profile
+        <a class="item item-icon-right" href="#/app/editProfile" ng-click="closePopover()">
+            <i class="icon ion-wrench"></i>
+            <label style="font-size:large;font-family:Kalinga;">
+                Edit Profile
+            </label>
         </a>
+
     </ion-content>
+    <div class="bar bar-footer bar-balanced">
+        <div class="title">CopyRight with SmartRetail Pvt Ltd</div>
+    </div>
 </ion-view>
 <style type="text/css">
     .error-tag {

@@ -6,7 +6,7 @@
                 <button menu-toggle="left" class="button button-icon icon ion-navicon-round"></button>
             </ion-nav-buttons>
             <ion-nav-buttons side="right">
-                <button ng-click="openPopover($event)" class="button button-icon icon ion-android-more-vertical">
+                <button ng-click="openPopover($event)" class="button button-icon icon ion-star">
                 </button>
             </ion-nav-buttons>
         </ion-nav-bar>
@@ -55,11 +55,11 @@
     <ion-popover-view>
         <ion-content class="contendheight">
             <div class="list">
-                <a class="item item-icon-left" ng-click="closePopover()" href="#/profile" >
+                <a class="item item-icon-left" ng-click="closePopover()" href="#/app/viewprofile" >
                     <i class="icon ion-person"></i>
                     Update Profile
                 </a>
-                <a class="item item-icon-left" href="#/retailers" ng-click="closePopover()">
+                <a class="item item-icon-left" href="#/app/retailers" ng-click="closePopover()">
                     <i class="icon ion-android-person-add"></i>
                     Update Vendor
                 </a>
@@ -72,11 +72,11 @@
                     <i class="icon ion-document"></i>
                     Legal
                 </a>
-                <a class="item item-icon-left" href="#/settings" ng-click="closePopover()">
+                <a class="item item-icon-left" href="#/app/settings" ng-click="closePopover()">
                     <i class="icon ion-ios-gear"></i>
                     Settings
                 </a>
-                <a class="item item-icon-left" href="#/contactus" ng-click="closePopover()">
+                <a class="item item-icon-left" href="#/app/contactus" ng-click="closePopover()">
                     <i class="icon ion-android-contact"></i>
                     Contact Us
                 </a>

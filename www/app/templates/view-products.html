@@ -4,8 +4,8 @@
         <a href="#/app/productsuggestion"><img src="../../images/logo.png" style="height:35px; width:30px;" /></a>
         <a style="color: black;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
         <div>
-            <a style="color: black;" class="button button-icon icon ion-ios-cart" href="#/app/addToCart">
-                <span class="badge badge-assertive" ng-show="parentObj.cartCount !== 0">{{parentObj.cartCount}}</span>
+            <a style="color: black;" class="button button-icon icon ion-ios-cart parent" href="#/app/addToCart">
+                <span class="badge badge-assertive child" ng-show="parentObj.cartCount !== 0">{{parentObj.cartCount}}</span>
             </a>
         </div>
     </ion-nav-buttons>
@@ -21,19 +21,14 @@
                 <!--<img ng-src="https://www.petfinder.com/wp-content/uploads/2012/11/140272627-grooming-needs-senior-cat-632x475.jpg" style="width:300px;height:300px;margin:auto;display:block"/>-->
             </ion-slide>
         </ion-slide-box>
-        <button class="button button-block" ng-click="showPopup()">
-            Daily Needs
-        </button>
-        <button class="button button-block" ng-click="showPopup()">
-            Non-Daily Needs
-        </button>
-        <button class="button button-block">
+        <button class="button button-block" ng-click="gotoOrders()">
             Track Order History
         </button>
         <button class="button button-block" ng-click="gotoWishlist()">
             Wishlist
         </button>
-
+        <input type="radio" checked />
+        <a href="#/app/legal" ng-click="closePopover()"> Terms and condition </a>
         <div class="row">
             <div class="col col:25">
                 <button class="button button-postitive" ng-click="getsmiley()">
@@ -49,3 +44,14 @@
             </button>-->
         </div>
     </ion-content>
+    <style type="text/css">
+        .parent {
+            position: relative;
+        }
+
+        .child {
+            position: absolute !important;
+            bottom: 0;
+            height: 20px;
+        }
+    </style>
