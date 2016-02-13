@@ -16,23 +16,23 @@
         })
         .config(function ($stateProvider, $urlRouterProvider) {
 
-            var idUserLogedIn = localStorage['idUserLogedIn'];
+            var isUserLogedIn = localStorage['isUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
-            $urlRouterProvider.otherwise("/app/editProfile");
+            $urlRouterProvider.otherwise("/register");
 
-            //if (idUserLogedIn == null) {
-            //    console.warn("user not loged in");
-            //    $urlRouterProvider.otherwise("/login");
-            //}
-            //else if (isDefaultRetailerSet == null) {
-            //    console.warn("default retailer not set");
-            //    $urlRouterProvider.otherwise("/retailers");
-            //}
-            //else {
-            //    console.info('everything set');
-            //    $urlRouterProvider.otherwise("/app/products");
-            //}
+            if (isUserLogedIn == null) {
+                console.warn("user not loged in");
+                $urlRouterProvider.otherwise("/login");
+            }
+            else if (isDefaultRetailerSet == null) {
+                console.warn("default retailer not set");
+                $urlRouterProvider.otherwise("/retailers");
+            }
+            else {
+                console.info('everything set');
+                $urlRouterProvider.otherwise("/app/products");
+            }
             $stateProvider
             .state("app", {
                 url: "/app",
@@ -47,7 +47,7 @@
             })
             .state("register", {
                 url: "/register",
-                params: { retailerID: '' },
+                params: { retailerID: '', phoneNo: '' },
                 templateUrl: "app/templates/view-register.html",
                 controller: "registerCtrl"
             })
@@ -59,6 +59,7 @@
             .state("app.retailers", {
                 url: "/retailers",
                 templateUrl: "app/templates/view-retailers.html",
+                params: { phoneNo: '' },
                 controller: "retailersCtrl"
             })
             .state("home", {
@@ -97,7 +98,7 @@
                 templateUrl: "app/templates/view-order-detail.html",
                 controller: 'orderDetailCtrl',
                 params: {
-                    orderID:''
+                    orderID: ''
                 }
             })
             .state("app.settings", {

@@ -8,32 +8,54 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
-        <div class="list list-inset" style="padding:2px">
-            <label class="item item-input" ng-focus="form.fnvalidation = true">
-                <input type="text" placeholder="First Name" name="firstname" ng-model="form.firstName">
+        <!--<div class="list list-inset" style="padding:2px">-->
+
+        <div class="list">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Phone No</span>
+                <input type="text" placeholder="Phone No" ng-model="form.mobileNo" readonly>
             </label>
-            <label class="item item-input">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">First Name</span>
+                <input type="text" placeholder="First Name" ng-model="form.firstName">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Last Name</span>
                 <input type="text" placeholder="Last Name" ng-model="form.surname">
             </label>
-            <label class="item item-input">
-                <input type="text" placeholder="Email" ng-model="form.email">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Email</span>
+                <input type="text" placeholder="Emial" ng-model="form.email">
             </label>
-            <label class="item item-input">
-                <input type="text" placeholder="Phone" ng-model="form.phone">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Password</span>
+                <input type="text" placeholder="Password" ng-model="form.password" ">
             </label>
-            <label class="item item-input">
-                <input type="password" placeholder="Password" ng-model="form.password">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Confirm password</span>
+                <input type="text" placeholder="Confirm password" ng-model="form.againpassword">
             </label>
-            <label class="item item-input">
-                <input type="password" placeholder="Password" ng-model="form.againpassword">
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Date of birth</span>
+                <input type="text" placeholder="Date of birth" ng-model="form.dateOfBirth">
             </label>
-            <button class="button button-block item-icon-left"
-                    ng-model="form.gender"
-                    ng-click="toogleGender()">
-                <i class="icon" ng-class="form.gender == 'Male' ? 'ion-man' : 'ion-woman'"></i>
-                {{form.gender}}
-            </button>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Street</span>
+                <input type="text" placeholder="Street" ng-model="form.street">
+            </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Zipcode</span>
+                <input type="text" placeholder="Zipcode" ng-model="form.zipcode">
+            </label>
         </div>
+
+        <button class="button button-block item-icon-left"
+                ng-model="form.gender"
+                ng-click="toogleGender()">
+            <i class="icon" ng-class="form.gender == 'Male' ? 'ion-man' : 'ion-woman'"></i>
+            {{form.gender}}
+        </button>
+        <!--</div>-->
         <button class="button button-block button-positive" ng-click="register()">
             Register
         </button>

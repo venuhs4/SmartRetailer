@@ -22,7 +22,7 @@
                         <img src="bag-item-1.png" />
                     </div>
                     <div class="col col-50">
-                        
+
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
@@ -45,7 +45,6 @@
                 </div>
             </div>
         </div>
-       
         <div class="list" ng-if="suggestionShow">
             <div class="item" ng-repeat="text in searchList track by $index" ng-click="suggestionClick(text)">
                 <p>{{text}}</p>
@@ -61,7 +60,7 @@
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
-                    <div class="col">
+                    <div class="col col-">
                         <i class="icon " ng-class="isFavourite(item.id) === true ? 'ion-android-favorite':'ion-android-favorite-outline'" ng-click="toggleFavourite(item)"></i>
                     </div>
                     <div class="col col-25">

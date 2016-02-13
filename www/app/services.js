@@ -140,7 +140,8 @@
     }])
     .factory('$config', function () {
         return {
-            IP_PORT: "192.168.1.40:8080"
+            IP_PORT: "192.168.1.51:8080",
+            CONSUMER_ID: localStorage['consumerId']
         }
     });
 })();

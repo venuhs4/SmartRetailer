@@ -1,11 +1,9 @@
 ﻿<ion-view>
-
     <ion-nav-buttons side="primary">
-        <a href="#/app/productsuggestion"><img src="../../images/logo.png" style="height:35px; width:30px;" /></a>
         <a style="color: black;" class="button button-icon icon ion-ios-search-strong" href="#/app/productsuggestion"></a>
         <div>
             <a style="color: black;" class="button button-icon icon ion-ios-cart parent" href="#/app/addToCart">
-                <span class="badge badge-assertive child" ng-show="parentObj.cartCount !== 0">{{parentObj.cartCount}}</span>
+                <span class="badge badge-assertive child" ng-if="parentObj.cartCount > 0">{{parentObj.cartCount}}</span>
             </a>
         </div>
     </ion-nav-buttons>
@@ -30,18 +28,16 @@
         <input type="radio" checked />
         <a href="#/app/legal" ng-click="closePopover()"> Terms and condition </a>
         <div class="row">
-            <div class="col col:25">
+            <div class="col col-25">
                 <button class="button button-postitive" ng-click="getsmiley()">
-                    <i class="ion-happy"></i>
+                    <i class="icon ion-happy"></i>
                 </button>
             </div>
-
-            <a class="button button-postitive" href="#/app/feedback" ng-click="sendfeedback()">
-                <i class="ion-edit"></i>
-            </a>
-            <!--<button class="button" ng-click="getfeedback()">
-
-            </button>-->
+            <div class="col col-offset-50 col-25">
+                <a class="button button-postitive" href="#/app/feedback" style="right:0" ng-click="sendfeedback()">
+                    <i class="icon ion-edit"></i>
+                </a>
+            </div>
         </div>
     </ion-content>
     <style type="text/css">
