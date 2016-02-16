@@ -14,11 +14,12 @@
                 //   AppRate.promptForRating(true);
             });
         })
-        .config(function ($stateProvider, $urlRouterProvider) {
+        .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
             var isUserLogedIn = localStorage['isUserLogedIn'];
             var isDefaultRetailerSet = localStorage['defaultRetailer'];
 
+            $ionicConfigProvider.views.forwardCache(true);
             $urlRouterProvider.otherwise("/register");
 
             if (isUserLogedIn == null) {
@@ -39,6 +40,11 @@
                 abstract: true,
                 templateUrl: "app/templates/view-menu.html",
                 controller: "appCtrl"
+            })
+            .state('app.changelocation', {
+                url: "/changelocation",
+                templateUrl: "app/templates/view-change-my-location.html",
+                controller: "changeLocationCtrl"
             })
             .state("initial", {
                 url: "/initial",

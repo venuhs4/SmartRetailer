@@ -8,13 +8,10 @@
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
         <form ng-submit="submitfeedback()">
-            <textarea placeholder="Share your feedback with us" rows="5" cols="80" maxlength="300" ng-model="form.feedbackText"></textarea>
-            <div class="row">
-                <div class="col col:100">
-                    <button class="button button-small button-assertive" ng-click="cancel()">Cancel</button>
-                </div>
-                <button class="button button-small button-positive" ng-click="submit">Submit</button>
-            </div>
+            <textarea placeholder="Share your feedback with us" rows="10" cols="80" maxlength="300" ng-model="form.feedbackText"></textarea>
+            <button class="button button-block button-royal" ng-click="submit">
+                Submit feeedback
+            </button>
         </form>
     </ion-content>
 </ion-view>

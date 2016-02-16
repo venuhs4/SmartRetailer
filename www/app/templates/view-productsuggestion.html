@@ -1,7 +1,4 @@
 ﻿<ion-nav-bar class="bar-positive">
-    <ion-nav-back-button class="button-clear">
-        <i class="ion-arrow-left-c"></i> Back
-    </ion-nav-back-button>
 </ion-nav-bar>
 <ion-view view-title="">
     <ion-nav-buttons side="primary">
@@ -26,10 +23,10 @@
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
-                    <div class="col">
-                        <i class="icon " ng-class="isFavourite(item.id) === true ? 'ion-android-favorite':'ion-android-favorite-outline'" ng-click="toggleFavourite(item)"></i>
-                    </div>
-                    <div class="col col-5">
+                    <div class="col col-25">
+                        <div class="row">
+                            <i class="icon " ng-class="isFavourite(item.id) === true ? 'ion-android-favorite':'ion-android-favorite-outline'" ng-click="toggleFavourite(item)"></i>
+                        </div>
                         <div class="row row-bottom">
                             <div class="col col-30">
                                 <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
@@ -60,24 +57,19 @@
                         <h3>{{item.name}}</h3>
                         <p>{{item.segment.category.name}}</p>
                     </div>
-                    <div class="col col-">
-                        <i class="icon " ng-class="isFavourite(item.id) === true ? 'ion-android-favorite':'ion-android-favorite-outline'" ng-click="toggleFavourite(item)"></i>
-                    </div>
                     <div class="col col-25">
-                        <div class="row row-bottom">
-                            <div class="col col-30">
-                                <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
-                            </div>
-                            <div class="col col-40">
-                                {{returnNumber(item.id)}}
-                            </div>
-                            <div class="col col-30">
-                                <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
-                            </div>
+                        <div class="row">
+                            <i class="icon " ng-class="isFavourite(item.id) === true ? 'ion-android-favorite':'ion-android-favorite-outline'" ng-click="toggleFavourite(item)"></i>
+                        </div>
+                        <div class="row">
+                            <div class="button button-icon ion-minus-circled" ng-click="minusQty(item.id)"></div>
+                            {{returnNumber(item.id)}}
+                            <div class="button button-icon ion-plus-circled" ng-click="plusQty(item.id)"></div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </ion-content>
 </ion-view>

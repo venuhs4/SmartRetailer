@@ -3,7 +3,7 @@
 
     angular.module("myapp.controllers", ['myapp.utils', 'ionic', 'ngCordova', 'ionic-toast'])
 
-    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", "ionicToast", "$config", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService, ionicToast, $config) {
+    .controller("appCtrl", ["$scope", "$customlocalstorage", "$ionicPopover", "$rootScope", "$http", "$state", "$filter", "$cordovaGeolocation", "$popupService", "ionicToast", "$config", "$Location", "$ionicLoading", function ($scope, $customlocalstorage, $ionicPopover, $rootScope, $http, $state, $filter, $cordovaGeolocation, $popupService, ionicToast, $config, $Location, $ionicLoading) {
         $scope.retailer = "";
         $scope.category = [];
         $scope.categorySelection = {
@@ -14,23 +14,13 @@
         $scope.shownSeg = null;
         console.log($scope.sampleData);
 
-        var posOptions = {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 0
-        };
-        console.log($cordovaGeolocation);
-        $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-            var lat = position.coords.latitude;
-            var long = position.coords.longitude;
-
-            //$popupService.showAlert("Location Success", "<p>Lat:" + lat + "</p>" + "<p>Long:" + long + "</p>" + "<p>Token:" + localStorage['token'] + "</p>");//localStorage['token']
-            console.log(posOptions);
-        }, function (err) {
-            $popupService.showAlert("Geo Fail", JSON.stringify(err));
-            console.log("position fail");
-            console.log(err);
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            console.log(pos);
+            //$ionicLoading.hide();
+        }, function (error) {
+            alert('Unable to get location: ' + error.message);
         });
+       
 
         //var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
         //deviceInfo.get(function (result) {
@@ -58,12 +48,16 @@
             console.log("category request failed");
         });
         $scope.getProducts = function (id1, id2, id3, subSegName) {
+            $ionicLoading.show({
+                template: "Loading products...",
+            });
             $scope.categorySelection.subSegment = subSegName;
             console.log($scope.categorySelection);
             $http({
                 method: "GET",
                 url: 'http://' + $config.IP_PORT + '/product/category/' + id1 + '/segment/' + id2 + '/subsegment/' + id3,
             }).success(function (res) {
+                $ionicLoading.hide();
                 console.log("success");
                 $scope.parentProducts.products = res;
                 $scope.parentObj.prods.push(res);
@@ -202,6 +196,59 @@
         }
     }
     ])
+
+    .controller("changeLocationCtrl", ["$scope", "$customlocalstorage", "$state", "$popupService", "$stringResource", "$compile", "$ionicLoading", function ($scope, $customlocalstorage, $state, $popupService, $stringResource, $compile, $ionicLoading) {
+
+        $ionicLoading.show({
+            template: '<ion-spinner></ion-spinner>Getting current location...',
+            showBackdrop: true
+        });
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            console.log(pos);
+            $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+                map: map,
+                title: 'Uluru (Ayers Rock)'
+            });
+            $ionicLoading.hide();
+        }, function (error) {
+            alert('Unable to get location: ' + error.message);
+        });
+
+        var mapOptions = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: 16,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map"),
+            mapOptions);
+
+        
+
+        $scope.map = map;
+        $scope.centerOnMe = function () {
+            if (!$scope.map) {
+                return;
+            }
+
+            $scope.loading = $ionicLoading.show({
+                template: 'Getting current location...',
+                showBackdrop: true
+            });
+
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+                $ionicLoading.hide();
+            }, function (error) {
+                alert('Unable to get location: ' + error.message);
+            });
+        };
+
+        $scope.clickTest = function () {
+            alert('Example of infowindow with ng-click')
+        };
+    }])
 
     .controller("initialCtrl", ["$scope", "$customlocalstorage", "$state", "$popupService", "$stringResource", function ($scope, $customlocalstorage, $state, $popupService, $stringResource) {
         $scope.data = {
@@ -759,7 +806,7 @@
         //}
     }])
 
-    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", '$config', '$filter', function ($scope, $state, $customlocalstorage, $http, ionicToast, $config, $filter) {
+    .controller("productsuggestionCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "ionicToast", '$config', '$filter', "$ionicLoading", function ($scope, $state, $customlocalstorage, $http, ionicToast, $config, $filter, $ionicLoading) {
         console.log('productsuggestionCtrl');
         $scope.data = { searchkey: '' };
         $scope.productList = [];
@@ -771,21 +818,6 @@
         $scope.productCount = 0;
         $scope.recentSearch = $customlocalstorage.getObjectorDefault('recentSearch', '[]');
 
-        var req = {
-            method: 'GET',
-            url: 'http://' + $config.IP_PORT + '/product',
-        }
-
-        $http(req).then(function (res) {
-            angular.forEach(res.data, function (item) {
-                $scope.productList.push(item.name);
-            });
-            console.log($scope.productList);
-            console.log("initial list");
-        }, function () {
-            console.warn("search post failed");
-        });
-
         $scope.searchSuggestion = function () {
             $scope.suggestionShow = true;
             $scope.productShow = false;
@@ -796,23 +828,11 @@
                 $scope.searchList = res.data;
             });
 
-            //if ($scope.data.searchkey.length <3)
-            //{
-            //    return;
-            //}
-
-            //var searchString = $scope.data.searchkey.toLowerCase();
-            //console.log("KEY:" + searchString);
-
-            //angular.forEach($scope.productList, function (item) {
-            //    if ((item).toLowerCase().indexOf(searchString) !== -1) {
-            //        $scope.searchList.push(item);
-            //    }
-            //});
-            //console.log($scope.searchList);
         };
         $scope.suggestionClick = function (text) {
-
+            $ionicLoading.show({
+                template: "<p>Products Loading..</p>",
+            });
             $scope.suggestionShow = false;
             $scope.productShow = true;
             $scope.categoryProductShow = false;
@@ -824,6 +844,7 @@
             }
 
             $http(productsReq).then(function (res) {
+                $ionicLoading.hide();
                 $scope.productDetailList = res.data;
                 $scope.productCache = $customlocalstorage.getObjectorDefault('recentSearch', '[]');
                 var foundFlag = false;
@@ -930,11 +951,15 @@
         $scope.product = { Name: "sdfdsf" };
     }])
 
-    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", "ionicToast", '$config',
-    function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource, ionicToast, $config) {
+    .controller("addToCartCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$filter", "$popupService", "$stringResource", "ionicToast", '$config','$ionicLoading',
+    function ($scope, $state, $customlocalstorage, $http, $filter, $popupService, $stringResource, ionicToast, $config, $ionicLoading) {
         $scope.displayProductDetailList = [];
         $scope.initProductDetailList = [];
         angular.forEach($customlocalstorage.getObjectorDefault('cartlist', '[]'), function (value, index) {
+            $ionicLoading.show({
+                template: "Loading Items...",
+                duration: 5000
+            });
             var req = {
                 method: 'GET',
                 url: 'http://' + $config.IP_PORT + '/product/' + value.productId,
@@ -942,6 +967,7 @@
             $http(req).then(function (res) {
                 $scope.initProductDetailList.push(res.data);
                 $scope.displayProductDetailList.push(res.data);
+                $ionicLoading.hide();
             }, function () {
                 console.warn("search post failed");
             });
@@ -954,6 +980,9 @@
             $popupService.showConfirm("Order Confirmation", $stringResource.getValue("orderconfirm"), $scope.data)
             .then(function () {
                 if ($scope.data.confirm) {
+                    $ionicLoading.show({
+                        template: "Placing Order. Please wait...",
+                    });
                     var cartList = $customlocalstorage.getObject('cartlist', '[]');
                     if (cartList.length <= 0) {
                         $popupService.showAlert("No Items in the Cart! Please add some items");
@@ -980,19 +1009,17 @@
                         data: JSON.stringify(orderData)
                     };
                     console.log(orderData);
-                    $http(orderReq).success(function (res, status) {
-                        localStorage['lastOrderID'] = res.data;
-                        $customlocalstorage.set("OrderId", res.data);
+                    $http(orderReq).success(function (res) {
                         console.log(res);
-                        console.log(status);
-                        console.log("post success");
+                        $popupService.showAlert('Order Request', 'Your order submitted successfully!(#' + res.orderId + ')');
+                        $ionicLoading.hide();
+                        localStorage['lastOrderID'] = res.orderId;
+                        $customlocalstorage.setObject('cartlist','[]');
                     }).then(
                     function (data) {
                         console.log(data);
                     });
                 }
-
-                ionicToast.show('Your order has been submitted Successfully!', 'middle', false, 2500);
             });
         };
         $scope.updateCartList = function () {
@@ -1004,8 +1031,6 @@
                 }
             });
             console.log($scope.displayProductDetailList);
-            //$scope.productCount = $scope.productDetailList;
-            //console.log($scope.productDetailList.length);
         }
 
         $scope.returnNumber = function (itemid) {
@@ -1299,11 +1324,15 @@
 
     }])
 
-    .controller("ordersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$config", function ($scope, $state, $customlocalstorage, $http, $config) {
+    .controller("ordersCtrl", ["$scope", "$state", "$customlocalstorage", "$http", "$config", "$ionicLoading", function ($scope, $state, $customlocalstorage, $http, $config, $ionicLoading) {
+        $ionicLoading.show({
+            template: "Loading your orders...",
+        });
         $scope.ordersList = [];
         var customerID = $config.CONSUMER_ID;
         $http.get('http://' + $config.IP_PORT + '/order/customer/' + customerID).then(function (res) {
             $scope.ordersList = res.data[1];
+            $ionicLoading.hide();
         }, function (err) {
             console.log(err);
         });
@@ -1313,13 +1342,17 @@
         console.log('ordersCtrl');
     }])
 
-    .controller("orderDetailCtrl", ['$scope', '$http', '$customlocalstorage', '$stateParams', '$config',
-    function ($scope, $http, $customlocalstorage, $stateParams, $config) {
+    .controller("orderDetailCtrl", ['$scope', '$http', '$customlocalstorage', '$stateParams', '$config','$ionicLoading',
+    function ($scope, $http, $customlocalstorage, $stateParams, $config, $ionicLoading) {
         $scope.orderDetail = {};
+        $ionicLoading.show({
+            template: "Loading order details...",
+        });
         console.log($stateParams.orderID);
         $http.get('http://' + $config.IP_PORT + '/order/order_id/' + $stateParams.orderID).then(function (res) {
             $scope.orderDetail = res.data;
             console.log($scope.orderDetail);
+            $ionicLoading.hide();
         }, function (err) {
             console.log(err);
         });

@@ -14,6 +14,7 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-refresher on-refresh="refresh(true)" spinner="android"></ion-refresher>
+        Your current default retailer is:<span style="color:blueviolet">{{retailer | uppercase}}</span>
         <div class="list" ng-show="data.isSuggestionShown">
             <div class="item" ng-repeat="sug in data.suggestions" >
                 <div ng-repeat="(h,v) in sug" ng-click="search(h,v)">
@@ -21,7 +22,7 @@
                 </div>
             </div>
         </div>
-        Your current default retailer is:<h1><span style="color:blueviolet">{{retailer | uppercase}}</span></h1>
+        
         <div class="card list" ng-show="data.isSearchResultShown">
             <ion-radio ng-model="data.choice" value="{{ret.id}}" ng-repeat="ret in data.retailers">
                 <div class="row">

@@ -140,8 +140,35 @@
     }])
     .factory('$config', function () {
         return {
-            IP_PORT: "192.168.1.51:8080",
+            IP_PORT: "smart-retail-one.cfapps.io",
             CONSUMER_ID: localStorage['consumerId']
         }
-    });
+    })
+    .factory('$Location', ["$cordovaGeolocation", function ($cordovaGeolocation) {
+
+        var pos = {
+            lat: '',
+            long:''
+        };
+        return {
+            getCurrentLocation: function()
+            {
+                var posOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 0
+                };
+                console.log($cordovaGeolocation);
+                $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                    pos.lat = position.coords.latitude;
+                    pos.long = position.coords.longitude;
+                }, function (err) {
+                    $popupService.showAlert("Geo Fail", JSON.stringify(err));
+                    console.log("position fail");
+                    console.log(err);
+                });
+                return pos;
+            }
+        }
+    }]);
 })();
